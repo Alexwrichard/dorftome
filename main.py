@@ -1,5 +1,8 @@
+#!/usr/bin/env python3
 from lxml import etree
 from lxml.etree import iterparse
+
+from get_attributes import *
 
 
 def main():
@@ -52,24 +55,11 @@ def load_generic_element(element, descriptor):
         
     return (elements_list, offset)
 
-'''
-an_id = a string, the id to get
-everything = the main dictionary containing everything
-a_type = The category, e.g. 'historical_figures'
-
-Given these, will return an element from the database, accounting for the possible offset.
-'''
-def get_element_for_id(an_id, a_type, everything):  
-    return everything[a_type][int(an_id) - everything[a_type + '_offset']]
-
-def get_name_for_id(an_id, a_type, everything):
-    return get_element_for_id(an_id, a_type, everything)['name']
-
 def add_event_link_to_hf(hfid, event_id, everything):
-    get_element_for_id(hfid, 'historical_figures', everything)['events'].append(event_id)
+    get_element(hfid, 'historical_figures', everything)['events'].append(event_id)
 
 def print_event_info(event_id, everything):
-    event = get_element_for_id(event_id, 'historical_events', everything)
+    event = get_element(event_id, 'historical_events', everything)
     print(event['type'] + ' in ' + event['year'])
     
 #Preliminary stuff.
@@ -81,8 +71,8 @@ def parse_historical_events(everything):
                     add_event_link_to_hf(event_data[key], event_data['id'], everything)
             
     for var in range(5500, 6100):
-        print(get_name_for_id(var, 'historical_figures', everything) + ' events:')
-        for i in get_element_for_id(var, 'historical_figures', everything)['events']:
+        print(get_name(var, 'historical_figures', everything) + ' events:')
+        for i in get_element(var, 'historical_figures', everything)['events']:
             print_event_info(i, everything)
 
 main()
