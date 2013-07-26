@@ -7,7 +7,7 @@ def main():
     everything = {}
  
     #There are a handful of "upper-level" tags. This includes historical_figures, sites, entities, etc.
-    #Loop through these.
+    #Loop through these. Inefficiency... the lower-level tags are looped through, but just ignored.
     for item in parser:
         if item[1].tag == 'df_world':
             for element in item[1].getchildren():
@@ -21,7 +21,7 @@ def main():
 #This basically goes two levels down, so we have historical_figures -> historical_figure -> data for that historical_figure
 #At the end, the dictionary looks like this:
 
-#everything = {'historical_events' : [ {'id' : '57', 'race': 'amphibian man', 'name': 'Urist McAmphibianMan'}, { another historical figure, etc.} ], 'historical_events_offset' : '57'}
+#everything = {'historical_figures' : [ {'id' : '57', 'race': 'amphibian man', 'name': 'Urist McAmphibianMan'}, { another historical figure, etc.} ], 'historical_figures_offset' : '57'}
 
 #So basically, it's a dictionary that maps strings to lists, where each list is a list of 
 #dictionaries that map strings to strings. 
@@ -35,7 +35,7 @@ def load_generic_element(element, descriptor):
     for element in elements_xml:
         element_dict = {}
         attributes = element.getchildren()
-        
+
         #Add the element attributes to a dictionary representing the element
         for attribute in attributes:
             if((offset is None) and (attribute.tag == 'id')):
@@ -66,32 +66,31 @@ def add_event_link_to_hf(hfid, event_id, everything):
 
 def print_event_info(event_id, everything):
     event = get_element_for_id(event_id, 'historical_events', everything)
-    print event['type'] + ' in ' + event['year']
+    print(event['type'] + ' in ' + event['year'])
     
 #Preliminary stuff.
 def parse_historical_events(everything):
     for event_data in everything['historical_events']:
         for key in event_data.keys():
+            #In the future, avoid adding stuff here. It's really pointless. The dictionary should be static after it is
+            #initially loaded from the xml.
+            to_add_dict = {}
             if key in ['hfid', 'slayer_hfid', 'group_hfid', 'group_1_hfid', 'group_2_hfid']:
                 if event_data[key] == '-1':
-                    event_data[key + '_name'] = 'no one'
+                    to_add_dict[key + '_name'] = 'no one'
                 else:
                     add_event_link_to_hf(event_data[key], event_data['id'], everything)
-                    event_data[key + '_name'] = get_name_for_id(int(event_data[key]), 'historical_figures', everything)
+                    to_add_dict[key + '_name'] = get_name_for_id(int(event_data[key]), 'historical_figures', everything)
             
             elif key == 'site_id':
-                event_data[key + '_name'] = get_name_for_id(int(event_data[key]), 'sites', everything)
+                to_add_dict[key + '_name'] = get_name_for_id(int(event_data[key]), 'sites', everything)
 
             elif key == 'entity_id':
-                event_data[key + '_name'] = get_name_for_id(int(event_data[key]), 'entities', everything)
+                to_add_dict[key + '_name'] = get_name_for_id(int(event_data[key]), 'entities', everything)
+        event_data = dict(event_data, **to_add_dict)
 
-        '''
-        if event_data['type'] == 'hf died':
-            if event_data['hfid'] != event_data['slayer_hfid']:
-                print '%s was killed by %s at %s.' % ( event_data['hfid_name'], event_data['slayer_hfid_name'], event_data['site_id_name'])
-                '''
     for var in range(5500, 6100):
-        print get_name_for_id(var, 'historical_figures', everything) + ' events:'
+        print(get_name_for_id(var, 'historical_figures', everything) + ' events:')
         for i in get_element_for_id(var, 'historical_figures', everything)['events']:
             print_event_info(i, everything)
 
