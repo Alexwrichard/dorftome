@@ -13,19 +13,23 @@ def main():
             for element in item[1].getchildren():
                 element_data = load_generic_element(element, 'regions')
                 everything[element.tag] = element_data[0]
+                #This "offset" is for indexing purposes. So, for example, perhaps the first historical figure in the
+                #'historical_figures' section has id=5764. From there, the indexes progress one-by-one. So we can
+                #set 'historical_figures_offset' to 5764. So then, accessing an element is easy and efficient; we just need to do
+                #everything[element_type][id - offset]
                 everything[element.tag + '_offset'] = element_data[1]
             break
     parse_historical_events(everything)
 
-#Given an "upper-level" tag, load the gigantic dictionary with every piece of data in that category.
-#This basically goes two levels down, so we have historical_figures -> historical_figure -> data for that historical_figure
-#At the end, the dictionary looks like this:
+'''
+Given an "upper-level" tag, load the gigantic dictionary with every piece of data in that category.
+This basically goes two levels down, so we have historical_figures -> historical_figure -> data for that historical_figure
+At the end, the dictionary looks like this:
+everything = {'historical_figures' : [ {'id' : '57', 'race': 'amphibian man', 'name': 'Urist McAmphibianMan'}, { another historical figure, etc.} ], 'historical_figures_offset' : '57'}
 
-#everything = {'historical_figures' : [ {'id' : '57', 'race': 'amphibian man', 'name': 'Urist McAmphibianMan'}, { another historical figure, etc.} ], 'historical_figures_offset' : '57'}
-
-#So basically, it's a dictionary that maps strings to lists, where each list is a list of 
-#dictionaries that map strings to strings. 
-
+So basically, it's a dictionary that maps strings to lists, where each list is a list of 
+dictionaries that map strings to strings. 
+'''
 def load_generic_element(element, descriptor):
     elements_xml = element.getchildren()
     elements_list = []
@@ -72,23 +76,10 @@ def print_event_info(event_id, everything):
 def parse_historical_events(everything):
     for event_data in everything['historical_events']:
         for key in event_data.keys():
-            #In the future, avoid adding stuff here. It's really pointless. The dictionary should be static after it is
-            #initially loaded from the xml.
-            to_add_dict = {}
             if key in ['hfid', 'slayer_hfid', 'group_hfid', 'group_1_hfid', 'group_2_hfid']:
-                if event_data[key] == '-1':
-                    to_add_dict[key + '_name'] = 'no one'
-                else:
+                if event_data[key] != '-1':
                     add_event_link_to_hf(event_data[key], event_data['id'], everything)
-                    to_add_dict[key + '_name'] = get_name_for_id(int(event_data[key]), 'historical_figures', everything)
             
-            elif key == 'site_id':
-                to_add_dict[key + '_name'] = get_name_for_id(int(event_data[key]), 'sites', everything)
-
-            elif key == 'entity_id':
-                to_add_dict[key + '_name'] = get_name_for_id(int(event_data[key]), 'entities', everything)
-        event_data = dict(event_data, **to_add_dict)
-
     for var in range(5500, 6100):
         print(get_name_for_id(var, 'historical_figures', everything) + ' events:')
         for i in get_element_for_id(var, 'historical_figures', everything)['events']:
