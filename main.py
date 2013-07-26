@@ -2,7 +2,8 @@
 from lxml import etree
 from lxml.etree import iterparse
 
-from get_attributes import *
+from attribute_getters import *
+from event_processing import event_type_dispatcher
 
 
 def main():
@@ -66,13 +67,18 @@ def print_event_info(event_id, everything):
 def parse_historical_events(everything):
     for event_data in everything['historical_events']:
         for key in event_data.keys():
-            if key in ['hfid', 'slayer_hfid', 'group_hfid', 'group_1_hfid', 'group_2_hfid']:
+            if key in set(['hfid', 'slayer_hfid', 'group_hfid', 'group_1_hfid', 'group_2_hfid', 'woundee_hfid',
+                           'wounder_hfid', 'trickster_hfid', 'cover_hfid', 'hist_fig_id', 'target_hfid', 
+                           'snatcher_hfid', 'changee_hfid', 'changer_hfid', 'hist_figure_id', 'hfid_target',]):
                 if event_data[key] != '-1':
                     add_event_link_to_hf(event_data[key], event_data['id'], everything)
+        event_type_dispatcher(event_data['id'], everything)
             
+    '''
     for var in range(5500, 6100):
         print(get_name(var, 'historical_figures', everything) + ' events:')
         for i in get_element(var, 'historical_figures', everything)['events']:
             print_event_info(i, everything)
+    '''
 
 main()

@@ -17,10 +17,12 @@ def get_element(an_id, a_type, everything):
 def get_name(an_id, a_type, everything):
     return get_element(an_id, a_type, everything)['name']
 
-
 ####################################
 #----SPECIFIC ATTRIBUTE GETTERS----#
 ####################################
 
 def get_event_type(an_id, everything):
-    return everything['events'][int(an_id) - everything['events_offset']]['type']
+    return everything['historical_events'][int(an_id) - everything['historical_events_offset']]['type']
+
+def get_hf_name(an_id, everything):
+    return get_name(an_id, 'historical_figures', everything)
