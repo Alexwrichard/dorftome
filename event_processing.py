@@ -59,6 +59,39 @@ def event_type_dispatcher(event_id, everything):
         event_data = get_element(event_id, 'historical_events', everything)
         types[event_type](event_data, everything)
 
+'''
+Historical event occurence is measured in seconds. Here, we will convert
+this to a readable date.
+
+Will return a string that looks like:
+'15th of Granite'
+'2nd of Timber'
+etc.
+'''
+def time_string(seconds):
+    seconds = int(seconds)
+    #There are 403200 seconds in a DF year.
+    yearsec = 403200
+    months = ['Granite','Slate','Felsite','Hematite','Malachite','Galena','Limestone','Sandstone','Timber','Moonstone','Opal','Obsidian']
+    #33600 = seconds in a DF month (403200 / 12)
+    sec_in_month = seconds % 33600
+    month = months[int(seconds / 33600)]
+    date = int(sec_in_month / 1200) + 1
+    
+    return '%s of %s' % (suffix_date(date), month)
+
+'''
+Return a properly suffix'd date.
+'''
+def suffix_date(date):
+    if str(date)[-1] == '1':
+        return str(date) + 'st'
+    elif str(date)[-1] == '2':
+        return str(date) + 'nd'
+    elif str(date)[-1] == '3':
+        return str(date) + 'rd'
+    else:
+        return str(date) + 'th'
 
 # Just for the record, I created the skeleton for the rest of this file in about 2 minutes
 # using Vim's q-recording feature, the dictionary above, and about 40 keystrokes.
@@ -93,7 +126,8 @@ def changed_creature_type(data, everything):
     print(get_hf_name(data['changer_hfid'], everything) + ' transformed ' + 
           get_hf_name(data['changee_hfid'], everything) + ' from a ' + data['old_caste'] + 
           ' ' + data['old_race'] + ' to a ' + data['new_caste'] + ' ' +
-          data['new_race'] + '.')
+          data['new_race'] + ' on the ' + time_string(data['seconds72']) + ', ' + 
+          data['year'] + '.')
 
 def create_entity_position(data, everything):
     pass
