@@ -15,7 +15,11 @@ def main():
     for item in parser:
         if item[1].tag == 'df_world':
             for element in item[1].getchildren():
-                element_data = load_generic_element(element, 'regions')
+                if element.tag == 'historical_figures':
+                    element_data = load_historical_figures(element)
+                else:
+                    #A lot of these tag types are just single-level, so we can just do this.
+                    element_data = load_generic_element(element)
                 everything[element.tag] = element_data[0]
                 #This "offset" is for indexing purposes. So, for example, perhaps the first historical figure in the
                 #'historical_figures' section has id=5764. From there, the indexes progress one-by-one. So we can
@@ -24,6 +28,7 @@ def main():
                 everything[element.tag + '_offset'] = element_data[1]
             break
     parse_historical_events(everything)
+    print(get_element(4974, 'historical_figures', everything))
 
 '''
 Given an "upper-level" tag, load the gigantic dictionary with every piece of data in that category.
@@ -34,8 +39,8 @@ everything = {'historical_figures' : [ {'id' : '57', 'race': 'amphibian man', 'n
 So basically, it's a dictionary that maps strings to lists, where each list is a list of 
 dictionaries that map strings to strings. 
 '''
-def load_generic_element(element, descriptor):
-    elements_xml = element.getchildren()
+def load_generic_element(element_category):
+    elements_xml = element_category.getchildren()
     elements_list = []
     offset = None
     
@@ -54,6 +59,48 @@ def load_generic_element(element, descriptor):
         element_dict['events'] = []
         elements_list.append(element_dict)
         
+    return (elements_list, offset)
+
+def load_historical_figures(element_category):
+    elements_xml = element_category.getchildren()
+    elements_list = []
+    offset = None
+
+    #For each element,
+    for element in elements_xml:
+        element_dict = {}
+
+        element_dict['events'] = []
+        element_dict['hf_links'] = []
+        element_dict['entity_links'] = []
+
+        attributes = element.getchildren()
+
+        #Add the element attributes to a dictionary representing the element
+        for attribute in attributes:
+            if((offset is None) and (attribute.tag == 'id')):
+                offset = int(attribute.text)
+
+
+            #These tags have tags nested within them, and there are multiple for each historical figure,
+            #Here, we parse them separately and store their information in subdictionaries within lists.
+            if attribute.tag not in ['hf_link', 'entity_link', 'hf_skill', 'entity_former_position_link']:
+                element_dict[attribute.tag] = attribute.text
+
+            elif attribute.tag == 'hf_link':
+                hf_link_dict = {}
+                for link_info in attribute.getchildren():
+                    hf_link_dict[link_info.tag] = link_info.text 
+                element_dict['hf_links'].append(hf_link_dict)
+
+            elif attribute.tag == 'entity_link':
+                entity_link_dict = {}
+                for link_info in attribute.getchildren():
+                    entity_link_dict[link_info.tag] = link_info.text
+                element_dict['entity_links'].append(entity_link_dict)
+
+        elements_list.append(element_dict)
+
     return (elements_list, offset)
 
 def add_event_link_to_hf(hfid, event_id, everything):
