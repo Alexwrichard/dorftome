@@ -56,7 +56,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuAbout.menuAction())
 
-        self.textBrowser.setHtml(self.html_string())
+        self.textBrowser.setDocument(self.html_text_doc())
 
         self.retranslateUi(MainWindow)
         self.connectButtons(MainWindow)
@@ -83,8 +83,25 @@ class Ui_MainWindow(object):
         selected = self.file_dialog.selectedFiles()[0]
         everything = load_dict(selected)
 
-    def html_string(self):
-        return '<p><b>Welcome!</b></p><p>To begin browsing, select File > Load XML and locate the correct file.'
+    def html_text_doc(self):
+        string = "<html><head>\n" + \
+                 "<link rel='stylesheet' type='text/css' href='format.css'>\n" + \
+                 "</head><body>\n" + \
+                 "<h1 class='page-title'> Welcome! </h1>\n" + \
+                 "<hr>\n" + \
+                 "<p class='plain-text'>To begin browsing, select File > Load XML and locate the correct file.</p>\n" + \
+                 "</body></html>"
+        css = "body {\n" + \
+              "    background-color:#555555;\n" + \
+              "}\n" + \
+              ".page-title {\n" + \
+              "    color:#BBBBBB;\n" + \
+              "    font-family:Helvetica, sans-serif;\n" + \
+              "}"
+        textDoc = QtGui.QTextDocument()
+        textDoc.addResource(QtGui.QTextDocument.StyleSheetResource, QtCore.QUrl("format.css"), css)
+        textDoc.setHtml(string)
+        return textDoc
 
 app = QtGui.QApplication(sys.argv)
 wid = QtGui.QMainWindow() 
