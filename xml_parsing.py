@@ -4,8 +4,8 @@ from lxml.etree import iterparse
 from attribute_getters import *
 from event_processing import event_type_dispatcher
 
-def load_dict():
-    parser = etree.iterparse('dwarf.xml')
+def load_dict(filename):
+    parser = etree.iterparse(filename)
     everything = {}
  
     #There are a handful of "upper-level" tags. This includes historical_figures, sites, entities, etc.
@@ -25,8 +25,7 @@ def load_dict():
                 #everything[element_type][id - offset]
                 everything[element.tag + '_offset'] = element_data[1]
             break
-    parse_historical_events(everything)
-    print(get_element(4974, 'historical_figures', everything))
+    #parse_historical_events(everything)
     return everything
 
 '''

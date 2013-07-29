@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
 
+def capitalize(string):
+    words = string.split(' ')
+    for i in range(len(words)):
+        if words[i] not in ['the']:
+            words[i] = words[i].capitalize()
+    
+    return ' '.join(words)
+
 ###################################
 #----GENERIC ATTRIBUTE GETTERS----#
 ###################################
@@ -15,7 +23,7 @@ def get_element(an_id, a_type, everything):
     return everything[a_type][int(an_id) - everything[a_type + '_offset']]
 
 def get_name(an_id, a_type, everything):
-    return get_element(an_id, a_type, everything)['name']
+    return capitalize(get_element(an_id, a_type, everything)['name'])
 
 ####################################
 #----SPECIFIC ATTRIBUTE GETTERS----#
@@ -26,3 +34,6 @@ def get_event_type(an_id, everything):
 
 def get_hf_name(an_id, everything):
     return get_name(an_id, 'historical_figures', everything)
+
+def get_hf(an_id, everything):
+    return get_element(an_id, 'historical_figures', everything)

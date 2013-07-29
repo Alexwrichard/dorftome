@@ -18,16 +18,17 @@ def recursive_build_tree(hf_data, children, everything, depth):
 '''
 hf_data is a list of dictionaries, each of which contain data for an hf link.
 '''
-def build_tree_from_hf(hf_data, everything):
+def build_tree_from_hf(hf_data, everything, depth):
+    max_depth = 1
+    print(hf_data)
     hf_links = hf_data['hf_links']
     for hf_link in hf_links:
-        if hf_link['link_type'] in ['father', 'mother']:
+        if hf_link['link_type'] in ['father', 'mother'] and depth < max_depth:
             print('stepping back...')
-            build_tree_from_hf(get_element(hf_link['hfid'], 'historical_figures', everything), everything)
+            build_tree_from_hf(get_hf(hf_link['hfid'], everything), everything, depth + 1)
             return
-    print(hf_data['id'])
     tree = recursive_build_tree(hf_data, [], everything, 0)
-    print(display_tree(tree, 0))
+    print(display_tree(tree, 0, everything))
 
 '''
 These two are helpers for the tree display function.
@@ -42,6 +43,7 @@ def stack_str_blocks(blocks):
     builder = []
     block_lens = [block_width(bl) for bl in blocks]
     split_blocks = [bl.split('\n') for bl in blocks]
+
 
     for line_list in itertools.zip_longest(*split_blocks, fillvalue=None):
         for i, line in enumerate(line_list):
@@ -61,12 +63,12 @@ You can take down the depth limit, but then you'll have a boring tree.
 
 stolen from http://stackoverflow.com/questions/15675261/displaying-a-tree-in-ascii
 '''
-def display_tree(tree, depth):
+def display_tree(tree, depth, everything):
     max_depth = 1
     tree = (str(tree[0]), tree[1])
-    if(tree[1] is None) or depth > max_depth: 
-        return tree[0]
-    child_strs = [display_tree(child, depth + 1) for child in tree[1]]
+    if(tree[1] is None) or depth >= max_depth: 
+        return get_hf_name(tree[0], everything)
+    child_strs = [display_tree(child, depth + 1, everything) for child in tree[1]]
     child_widths = [block_width(s) for s in child_strs]
 
     display_width = max(len(tree[0]), sum(child_widths) + len(child_widths) - 1)
@@ -89,7 +91,7 @@ def display_tree(tree, depth):
 
     brace = ''.join(brace_builder)
     
-    name_str = '{:^{}}'.format(tree[0], display_width)
+    name_str = '{:^{}}'.format(get_hf_name(tree[0], everything), display_width)
     below = stack_str_blocks(child_strs)
 
     return name_str + '\n' + brace + '\n' + below

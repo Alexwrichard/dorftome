@@ -129,7 +129,7 @@ def changed_creature_type(data, everything):
           ' ' + data['old_race'] + ' to a ' + data['new_caste'] + ' ' +
           data['new_race'] + ' on the ' + time_string(data['seconds72']) + ', ' + 
           data['year'] + '.')
-          '''
+    '''
     pass
 
 def create_entity_position(data, everything):

@@ -6,6 +6,7 @@
 #      by: pyside-uic 0.2.14 running on PySide 1.2.0
 
 import sys
+from xml_parsing import load_dict
 from PySide import QtCore, QtGui
 
 class Ui_MainWindow(object):
@@ -27,6 +28,7 @@ class Ui_MainWindow(object):
         self.textBrowser.setObjectName("textBrowser")
         self.gridLayout.addWidget(self.textBrowser, 1, 0, 1, 1)
         self.lineEdit = QtGui.QLineEdit(self.centralwidget)
+        self.lineEdit.setText("")
         self.lineEdit.setObjectName("lineEdit")
         self.gridLayout.addWidget(self.lineEdit, 0, 0, 1, 1)
         self.gridLayout_2.addLayout(self.gridLayout, 0, 0, 1, 1)
@@ -46,20 +48,43 @@ class Ui_MainWindow(object):
         self.actionHelp.setObjectName("actionHelp")
         self.actionLoad_XML = QtGui.QAction(MainWindow)
         self.actionLoad_XML.setObjectName("actionLoad_XML")
+        self.actionExit = QtGui.QAction(MainWindow)
+        self.actionExit.setObjectName("actionExit")
         self.menuFile.addAction(self.actionLoad_XML)
+        self.menuFile.addSeparator()
+        self.menuFile.addAction(self.actionExit)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuAbout.menuAction())
 
+        self.textBrowser.setHtml(self.html_string())
+
         self.retranslateUi(MainWindow)
+        self.connectButtons(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
-        self.lineEdit.setText(QtGui.QApplication.translate("MainWindow", "Search...", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("MainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
         self.menuAbout.setTitle(QtGui.QApplication.translate("MainWindow", "About", None, QtGui.QApplication.UnicodeUTF8))
         self.actionHelp.setText(QtGui.QApplication.translate("MainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
         self.actionLoad_XML.setText(QtGui.QApplication.translate("MainWindow", "Load XML...", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExit.setText(QtGui.QApplication.translate("MainWindow", "Exit", None, QtGui.QApplication.UnicodeUTF8))
+
+    def connectButtons(self, MainWindow):
+        QtCore.QObject.connect(self.actionExit, QtCore.SIGNAL('triggered()'), QtCore.QCoreApplication.instance().quit)
+        QtCore.QObject.connect(self.actionLoad_XML, QtCore.SIGNAL('triggered()'), self.file_dialog)
+
+    def file_dialog(self):
+        self.file_dialog = QtGui.QFileDialog()
+        self.file_dialog.setVisible(True)
+        QtCore.QObject.connect(self.file_dialog, QtCore.SIGNAL('accepted()'), self.xml_triggered)
+
+    def xml_triggered(self):
+        selected = self.file_dialog.selectedFiles()[0]
+        everything = load_dict(selected)
+
+    def html_string(self):
+        return '<p><b>Welcome!</b></p><p>To begin browsing, select File > Load XML and locate the correct file.'
 
 app = QtGui.QApplication(sys.argv)
 wid = QtGui.QMainWindow() 
