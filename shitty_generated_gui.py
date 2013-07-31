@@ -7,6 +7,7 @@
 
 import sys
 from xml_parsing import load_dict
+from page_builders import build_hf_page
 from PySide import QtCore, QtGui
 
 class Ui_MainWindow(object):
@@ -83,6 +84,8 @@ class Ui_MainWindow(object):
         selected = self.file_dialog.selectedFiles()[0]
         everything = load_dict(selected)
 
+        self.textDoc.setHtml(build_hf_page(6666, everything, self.css))
+
     def html_text_doc(self):
         string = "<html><head>\n" + \
                  "<link rel='stylesheet' type='text/css' href='format.css'>\n" + \
@@ -91,17 +94,30 @@ class Ui_MainWindow(object):
                  "<hr>\n" + \
                  "<p class='plain-text'>To begin browsing, select File > Load XML and locate the correct file.</p>\n" + \
                  "</body></html>"
-        css = "body {\n" + \
-              "    background-color:#555555;\n" + \
-              "}\n" + \
-              ".page-title {\n" + \
-              "    color:#BBBBBB;\n" + \
-              "    font-family:Helvetica, sans-serif;\n" + \
-              "}"
-        textDoc = QtGui.QTextDocument()
-        textDoc.addResource(QtGui.QTextDocument.StyleSheetResource, QtCore.QUrl("format.css"), css)
-        textDoc.setHtml(string)
-        return textDoc
+        self.css = \
+                "body {\
+                    background-color:#555555;\
+                }\
+                p {\
+                    font-family:Garamond, serif;\
+                    font-size:13px\
+                }\
+                .hf-name-occurence{\
+                    font-family:Helvetica, sans-serif;\
+                    font-size:14px\
+                }\
+                .page-title {\
+                    color:#BBBBBB;\
+                    font-family:Helvetica, sans-serif;\
+                }\
+                .page-description {\
+                    color:#999999;\
+                    font-family:Helvetica, sans-serif;\
+                }"
+        self.textDoc = QtGui.QTextDocument()
+        self.textDoc.addResource(QtGui.QTextDocument.StyleSheetResource, QtCore.QUrl("format.css"), self.css)
+        self.textDoc.setHtml(string)
+        return self.textDoc
 
 app = QtGui.QApplication(sys.argv)
 wid = QtGui.QMainWindow() 

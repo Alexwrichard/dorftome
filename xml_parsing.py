@@ -25,7 +25,7 @@ def load_dict(filename):
                 #everything[element_type][id - offset]
                 everything[element.tag + '_offset'] = element_data[1]
             break
-    #parse_historical_events(everything)
+    parse_historical_events(everything)
     return everything
 
 '''
@@ -112,8 +112,6 @@ def parse_historical_events(everything):
                            'snatcher_hfid', 'changee_hfid', 'changer_hfid', 'hist_figure_id', 'hfid_target',]):
                 if event_data[key] != '-1':
                     add_event_link_to_hf(event_data[key], event_data['id'], everything)
-        event_type_dispatcher(event_data['id'], everything)
-            
     '''
     for var in range(5500, 6100):
         print(get_name(var, 'historical_figures', everything) + ' events:')

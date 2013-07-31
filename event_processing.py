@@ -57,7 +57,9 @@ def event_type_dispatcher(event_id, everything):
     event_type = get_event_type(event_id, everything)
     if event_type in types.keys():
         event_data = get_element(event_id, 'historical_events', everything)
-        types[event_type](event_data, everything)
+        #This might look confusing, but it's just a function call to 
+        #whatever function matches up in the above dictionary.
+        return types[event_type](event_data, everything)
 
 '''
 Historical event occurence is measured in seconds. Here, we will convert
@@ -123,14 +125,11 @@ def change_hf_state(data, everything):
     pass
 
 def changed_creature_type(data, everything):
-    '''
-    print(get_hf_name(data['changer_hfid'], everything) + ' transformed ' + 
+    return(get_hf_name(data['changer_hfid'], everything) + ' transformed ' + 
           get_hf_name(data['changee_hfid'], everything) + ' from a ' + data['old_caste'] + 
           ' ' + data['old_race'] + ' to a ' + data['new_caste'] + ' ' +
           data['new_race'] + ' on the ' + time_string(data['seconds72']) + ', ' + 
           data['year'] + '.')
-    '''
-    pass
 
 def create_entity_position(data, everything):
     pass

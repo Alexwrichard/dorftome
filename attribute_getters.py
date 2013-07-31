@@ -3,7 +3,7 @@
 def capitalize(string):
     words = string.split(' ')
     for i in range(len(words)):
-        if words[i] not in ['the']:
+        if words[i] not in ['the', 'a']:
             words[i] = words[i].capitalize()
     
     return ' '.join(words)
@@ -34,6 +34,15 @@ def get_event_type(an_id, everything):
 
 def get_hf_name(an_id, everything):
     return get_name(an_id, 'historical_figures', everything)
+
+def get_hf_events(an_id, everything):
+    return get_element(an_id,  'historical_figures', everything)['events']
+
+def get_hf_race(an_id, everything):
+    return capitalize(get_element(an_id, 'historical_figures', everything)['race'])
+
+def get_hf_gender(an_id, everything):
+    return capitalize(get_element(an_id, 'historical_figures', everything)['caste'])
 
 def get_hf(an_id, everything):
     return get_element(an_id, 'historical_figures', everything)
