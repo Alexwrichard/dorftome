@@ -20,7 +20,7 @@ def build_hf_page(an_id, everything, css):
 
     #Beginning HTML for the historical figure page.
     page = "<html><head>\
-            <link rel='stylesheet' type='text/css' href='format.css'>\
+            <style type='text/css'>" + css + "</style>\
             </head><body>\
             <h1 class='page-title'>" + hf_name + "</h1>\
             <h3 class='page-description'>" + get_hf_gender(an_id, everything) +\
@@ -49,6 +49,5 @@ def build_hf_page(an_id, everything, css):
     page += "</div>"#"</ul></div>"
 
     page += "</body></html>"
-    print(page)
 
     return page

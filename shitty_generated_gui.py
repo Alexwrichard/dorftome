@@ -87,13 +87,6 @@ class Ui_MainWindow(object):
         self.textDoc.setHtml(build_hf_page(6666, everything, self.css))
 
     def html_text_doc(self):
-        string = "<html><head>\n" + \
-                 "<link rel='stylesheet' type='text/css' href='format.css'>\n" + \
-                 "</head><body>\n" + \
-                 "<h1 class='page-title'> Welcome! </h1>\n" + \
-                 "<hr>\n" + \
-                 "<p class='plain-text'>To begin browsing, select File > Load XML and locate the correct file.</p>\n" + \
-                 "</body></html>"
         self.css = \
                 "body {\
                     background-color:#555555;\
@@ -123,8 +116,14 @@ class Ui_MainWindow(object):
                     padding:10px;\
                     border: 2px solid black;\
                 }"
+        string = "<html><head>\
+                 <style type='text/css'>" + self.css + "</style>\
+                 </head><body>\
+                 <h1 class='page-title'> Welcome! </h1>\
+                 <hr>\
+                 <p class='plain-text'>To begin browsing, select File > Load XML and locate the correct file.</p>\
+                 </body></html>"
         self.textDoc = QtGui.QTextDocument()
-        self.textDoc.addResource(QtGui.QTextDocument.StyleSheetResource, QtCore.QUrl("format.css"), self.css)
         self.textDoc.setHtml(string)
         return self.textDoc
 
