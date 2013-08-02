@@ -3,24 +3,53 @@ from attribute_getters import *
 from event_processing import time_string, event_type_dispatcher
 from PySide import QtGui, QtCore
 
+CSS_STR = \
+        "body {\
+            background-color:#555555;\
+        }\
+        .page-content {\
+            font-family:Garamond, serif;\
+            font-size:13px;\
+            float:left;\
+        }\
+        .hf-name-occurence{\
+            font-family:Helvetica, sans-serif;\
+            font-size:14px;\
+        }\
+        .page-title {\
+            color:#BBBBBB;\
+            font-family:Helvetica, sans-serif;\
+        }\
+        .page-description {\
+            color:#999999;\
+            font-family:Helvetica, sans-serif;\
+        }\
+        .memberships {\
+            font-family:Helvetica, sans-serif;\
+            width:500px;\
+            float:right;\
+            color:#FF0000;\
+            padding:10px;\
+            border: 2px solid black;\
+        }"
+
 '''
 LINK CONVENTIONS:
 ent#### = entity
 hf#### = historical figure
-
 '''
 
 '''
 Given an id, return an HTML string describing that historical figure.
 '''
-def build_hf_page(an_id, everything, css):
+def build_hf_page(an_id, everything):
     #event strings is an array of human-readable strings describing events.
     event_strings = []
     hf_name = get_hf_name(an_id, everything)
 
     #Beginning HTML for the historical figure page.
     page = "<html><head>\
-            <style type='text/css'>" + css + "</style>\
+            <style type='text/css'>" + CSS_STR + "</style>\
             </head><body>\
             <h1 class='page-title'>" + hf_name + "</h1>\
             <h3 class='page-description'>" + get_hf_gender(an_id, everything) +\
@@ -51,3 +80,14 @@ def build_hf_page(an_id, everything, css):
     page += "</body></html>"
 
     return page
+
+def build_splash_page():
+    string = "<html><head>\
+             <style type='text/css'>" + CSS_STR + "</style>\
+             </head><body>\
+             <h1 class='page-title'> Welcome! </h1>\
+             <hr>\
+             <p class='plain-text'>To begin browsing, select File > Load XML and locate the correct file.</p>\
+             </body></html>"
+
+    return string

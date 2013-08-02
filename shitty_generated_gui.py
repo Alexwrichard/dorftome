@@ -7,7 +7,7 @@
 
 import sys
 from xml_parsing import load_dict
-from page_builders import build_hf_page
+import page_builders
 from PySide import QtCore, QtGui
 
 class Ui_MainWindow(object):
@@ -57,7 +57,9 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuAbout.menuAction())
 
-        self.textBrowser.setDocument(self.html_text_doc())
+        self.textDoc = QtGui.QTextDocument()
+        self.textDoc.setHtml(page_builders.build_splash_page())
+        self.textBrowser.setDocument(self.textDoc)
 
         self.retranslateUi(MainWindow)
         self.connectButtons(MainWindow)
@@ -78,57 +80,15 @@ class Ui_MainWindow(object):
     def file_dialog(self):
         self.file_dialog = QtGui.QFileDialog()
         self.file_dialog.setVisible(True)
-        QtCore.QObject.connect(self.file_dialog, QtCore.SIGNAL('accepted()'), self.xml_triggered)
+        QtCore.QObject.connect(self.file_dialog, QtCore.SIGNAL('accepted()'), self.xml_loaded)
 
-    def xml_triggered(self):
+    def xml_loaded(self):
         selected = self.file_dialog.selectedFiles()[0]
         everything = load_dict(selected)
-
-        self.textDoc.setHtml(build_hf_page(6666, everything, self.css))
-
-    def html_text_doc(self):
-        self.css = \
-                "body {\
-                    background-color:#555555;\
-                }\
-                .page-content {\
-                    font-family:Garamond, serif;\
-                    font-size:13px;\
-                    float:left;\
-                }\
-                .hf-name-occurence{\
-                    font-family:Helvetica, sans-serif;\
-                    font-size:14px;\
-                }\
-                .page-title {\
-                    color:#BBBBBB;\
-                    font-family:Helvetica, sans-serif;\
-                }\
-                .page-description {\
-                    color:#999999;\
-                    font-family:Helvetica, sans-serif;\
-                }\
-                .memberships {\
-                    font-family:Helvetica, sans-serif;\
-                    width:500px;\
-                    float:right;\
-                    color:#FF0000;\
-                    padding:10px;\
-                    border: 2px solid black;\
-                }"
-        string = "<html><head>\
-                 <style type='text/css'>" + self.css + "</style>\
-                 </head><body>\
-                 <h1 class='page-title'> Welcome! </h1>\
-                 <hr>\
-                 <p class='plain-text'>To begin browsing, select File > Load XML and locate the correct file.</p>\
-                 </body></html>"
-        self.textDoc = QtGui.QTextDocument()
-        self.textDoc.setHtml(string)
-        return self.textDoc
+        self.textDoc.setHtml(page_builders.build_hf_page(6666, everything))
 
 app = QtGui.QApplication(sys.argv)
-wid = QtGui.QMainWindow() 
+wid = QtGui.QMainWindow()
 window = Ui_MainWindow()
 window.setupUi(wid)
 wid.show()
