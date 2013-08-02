@@ -19,7 +19,7 @@ def recursive_build_tree(hf_data, children, everything, depth):
 hf_data is a list of dictionaries, each of which contain data for an hf link.
 '''
 def build_tree_from_hf(hf_data, everything, depth):
-    max_depth = 1
+    max_depth = 2
     print(hf_data)
     hf_links = hf_data['hf_links']
     for hf_link in hf_links:
@@ -64,7 +64,7 @@ You can take down the depth limit, but then you'll have a boring tree.
 stolen from http://stackoverflow.com/questions/15675261/displaying-a-tree-in-ascii
 '''
 def display_tree(tree, depth, everything):
-    max_depth = 1
+    max_depth = 2
     tree = (str(tree[0]), tree[1])
     if(tree[1] is None) or depth >= max_depth: 
         return get_hf_name(tree[0], everything)

@@ -13,7 +13,7 @@ from PySide import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(634, 618)
+        MainWindow.resize(800, 600)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -98,13 +98,14 @@ class Ui_MainWindow(object):
                 "body {\
                     background-color:#555555;\
                 }\
-                p {\
+                .page-content {\
                     font-family:Garamond, serif;\
-                    font-size:13px\
+                    font-size:13px;\
+                    float:left;\
                 }\
                 .hf-name-occurence{\
                     font-family:Helvetica, sans-serif;\
-                    font-size:14px\
+                    font-size:14px;\
                 }\
                 .page-title {\
                     color:#BBBBBB;\
@@ -113,6 +114,14 @@ class Ui_MainWindow(object):
                 .page-description {\
                     color:#999999;\
                     font-family:Helvetica, sans-serif;\
+                }\
+                .memberships {\
+                    font-family:Helvetica, sans-serif;\
+                    width:500px;\
+                    float:right;\
+                    color:#FF0000;\
+                    padding:10px;\
+                    border: 2px solid black;\
                 }"
         self.textDoc = QtGui.QTextDocument()
         self.textDoc.addResource(QtGui.QTextDocument.StyleSheetResource, QtCore.QUrl("format.css"), self.css)
