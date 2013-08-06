@@ -4,33 +4,42 @@ from event_processing import time_string, event_type_dispatcher
 from PySide import QtGui, QtCore
 
 CSS_STR = \
-        "body {\
+        "\
+        body {\
             background-color:#555555;\
+        }\
+        a.entity-link:link {\
+            text-decoration:none;\
+            color:#448844;\
+        }\
+        a.entity-link:hover {\
+            text-decoration:none;\
+            color:#DDDDDD;\
+        }\
+        .hf-name-occurence {\
+            font-family:Helvetica, sans-serif;\
+            font-size:14px;\
+        }\
+        .memberships {\
+            font-family:Helvetica, sans-serif;\
+            float:right;\
+            color:#FF0000;\
+            padding:10px;\
+            border: 2px solid;\
+            border-color: #222222;\
         }\
         .page-content {\
             font-family:Garamond, serif;\
             font-size:13px;\
             float:left;\
         }\
-        .hf-name-occurence{\
-            font-family:Helvetica, sans-serif;\
-            font-size:14px;\
-        }\
-        .page-title {\
-            color:#BBBBBB;\
-            font-family:Helvetica, sans-serif;\
-        }\
         .page-description {\
             color:#999999;\
             font-family:Helvetica, sans-serif;\
         }\
-        .memberships {\
+        .page-title {\
+            color:#BBBBBB;\
             font-family:Helvetica, sans-serif;\
-            width:500px;\
-            float:right;\
-            color:#FF0000;\
-            padding:10px;\
-            border: 2px solid black;\
         }"
 
 '''
@@ -72,7 +81,7 @@ def build_hf_page(an_id, everything):
     
     #For each entity link, we will add that entity to the membership list.
     for entity_data in get_hf(an_id, everything)['entity_links']:
-        page += "<p><a href='ent" + entity_data['entity_id'] + "'>" +\
+        page += "<p><a href='ent" + entity_data['entity_id'] + "' class='entity-link' >" +\
                 get_element(entity_data['entity_id'], 'entities', everything)['name'] +\
                 "</a></p>"
     page += "</div>"#"</ul></div>"

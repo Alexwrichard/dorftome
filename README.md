@@ -16,3 +16,9 @@ I'd like to do things that other DF legends browsers don't do well, namely:
 * Easy reading. Actually, this is the most important. I want to build a way for a reader to get immersed in the history of the world. I haven't been able to experience this in DF Legends mode.
 * Hyperlinks galore (This is kind of a given)
 * Tabbed browsing
+
+###Dependencies
+* lxml
+* qt4
+* qtwebkit (Install this before building PySide, or else it will build successfully without QtWebKit support.)
+* pyside
