@@ -44,9 +44,17 @@ CSS_STR = \
 
 '''
 LINK CONVENTIONS:
-ent#### = entity
+en#### = entity
 hf#### = historical figure
 '''
+def dispatch_link(page_link, everything):
+    code = page_link[:2]
+    dispatcher = {
+                  'en' : build_entity_page,
+                  'hf' : build_hf_page,
+                  'sp' : build_splash_page,
+                 }
+    return dispatcher[code](int(page_link[2:]), everything)
 
 '''
 Given an id, return an HTML string describing that historical figure.
@@ -81,8 +89,8 @@ def build_hf_page(an_id, everything):
     
     #For each entity link, we will add that entity to the membership list.
     for entity_data in get_hf(an_id, everything)['entity_links']:
-        page += "<p><a href='ent" + entity_data['entity_id'] + "' class='entity-link' >" +\
-                get_element(entity_data['entity_id'], 'entities', everything)['name'] +\
+        page += "<p><a href='en" + entity_data['entity_id'] + "' class='entity-link' >" +\
+                get_ent_name(entity_data['entity_id'], everything) +\
                 "</a></p>"
     page += "</div>"#"</ul></div>"
 
@@ -90,7 +98,17 @@ def build_hf_page(an_id, everything):
 
     return page
 
-def build_splash_page():
+def build_entity_page(an_id, everything):
+    ent_name = get_ent_name(an_id, everything)
+    page = "<html><head>\
+            <style type='text/css'>" + CSS_STR + "</style>\
+            </head><body>\
+            <h1 class='page-title'>" + ent_name + "</h1>\
+            <hr>\
+            </body></html>"
+    return page
+
+def build_splash_page(dummy, dummy2):
     string = "<html><head>\
              <style type='text/css'>" + CSS_STR + "</style>\
              </head><body>\

@@ -10,6 +10,8 @@ from PySide import QtCore, QtGui, QtWebKit
 
 class UI(object):
     def setupUi(self, main_window):
+        #Dictionary has not been loaded yet.
+        self.everything = None
 
         #Main window creation
         main_window.setObjectName("main_window")
@@ -67,17 +69,30 @@ class UI(object):
         self.action_load_xml.setObjectName("actionLoad_XML")
         self.action_exit = QtGui.QAction(main_window)
         self.action_exit.setObjectName("actionExit")
+
         self.menu_file.addAction(self.action_load_xml)
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_exit)
         self.menubar.addAction(self.menu_file.menuAction())
         self.menubar.addAction(self.menuAbout.menuAction())
 
-        self.text_browser.setHtml(page_builders.build_splash_page())
+        self.on_page_load('sp0000')
 
         self.retranslateUi(main_window)
         self.connectButtons(main_window)
         QtCore.QMetaObject.connectSlotsByName(main_window)
+    
+    def on_page_load(self, page_link):
+        print(page_link)
+        try:
+            #If it is a URL object, convert to a string first.
+            page_link = page_link.toString()
+        except:
+            #Otherwise, it's already a string.
+            pass
+        self.text_browser.setHtml(page_builders.dispatch_link(page_link, self.everything))
+        self.text_browser.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateAllLinks)
+        self.text_browser.linkClicked.connect(self.on_page_load)
 
     def retranslateUi(self, main_window):
         main_window.setWindowTitle(QtGui.QApplication.translate("main_window", "main_window", None, QtGui.QApplication.UnicodeUTF8))
@@ -98,8 +113,8 @@ class UI(object):
 
     def xml_loaded(self):
         selected = self.file_dialog.selectedFiles()[0]
-        everything = load_dict(selected)
-        self.text_browser.setHtml(page_builders.build_hf_page(6666, everything))
+        self.everything = load_dict(selected)
+        self.on_page_load('hf6666')
 
 app = QtGui.QApplication(sys.argv)
 wid = QtGui.QMainWindow()
