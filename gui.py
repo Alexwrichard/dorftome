@@ -7,6 +7,7 @@ import sys
 from xml_parsing import load_dict
 import page_builders
 from PySide import QtCore, QtGui, QtWebKit
+from random import randint
 
 class UI(object):
     def setupUi(self, main_window):
@@ -24,19 +25,13 @@ class UI(object):
 
         #Central widget that contains all other widgets
         self.centralwidget = QtGui.QWidget(main_window)
-        self.centralwidget.setObjectName("centralwidget")
+        self.centralwidget.setObjectName("centralwidget") #I honestly have no idea what this means.
+
         #Layout setup
         self.grid_layout_2 = QtGui.QGridLayout(self.centralwidget)
         self.grid_layout_2.setObjectName("gridLayout_2")
         self.grid_layout = QtGui.QGridLayout()
         self.grid_layout.setObjectName("gridLayout")
-
-        #Browser
-
-        #self.text_browser = QtGui.QTextBrowser(self.centralwidget)
-        self.text_browser = QtWebKit.QWebView(self.centralwidget)
-        self.text_browser.setObjectName("textBrowser")
-        self.grid_layout.addWidget(self.text_browser, 1, 0, 1, 1)
 
         #Search bar
         self.search_bar = QtGui.QLineEdit(self.centralwidget)
@@ -44,8 +39,18 @@ class UI(object):
         self.search_bar.setObjectName("lineEdit")
         self.grid_layout.addWidget(self.search_bar, 0, 0, 1, 1)
 
-        self.grid_layout_2.addLayout(self.grid_layout, 0, 0, 1, 1)
+        #Tabs
+        self.tab_widget = QtGui.QTabWidget(main_window)
+        #self.grid_layout.addWidget(self.tab_widget, 2, 0, 1, 1)
+        self.grid_layout.addWidget(self.tab_widget, 1, 0, 1, 1)
 
+        #Browser
+        self.tab_count = 0
+        self.browsers = [] #An array of browsers. So we can use tabbed browsing.
+        self.browsers.append(QtWebKit.QWebView(self.tab_widget))
+        self.browsers[0].setObjectName("textBrowser")
+
+        self.grid_layout_2.addLayout(self.grid_layout, 0, 0, 1, 1)
         main_window.setCentralWidget(self.centralwidget)
 
         #Menu bar
@@ -90,9 +95,15 @@ class UI(object):
         except:
             #Otherwise, it's already a string.
             pass
-        self.text_browser.setHtml(page_builders.dispatch_link(page_link, self.everything))
-        self.text_browser.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateAllLinks)
-        self.text_browser.linkClicked.connect(self.on_page_load)
+
+        self.tab_count += 1
+
+        self.browsers.append(QtWebKit.QWebView(self.tab_widget))
+        self.browsers[self.tab_count].setHtml(page_builders.dispatch_link(page_link, self.everything))
+        self.browsers[self.tab_count].page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateAllLinks)
+        self.browsers[self.tab_count].linkClicked.connect(self.on_page_load)
+
+        self.tab_widget.addTab(self.browsers[self.tab_count], str(randint(0, 10000)))
 
     def retranslateUi(self, main_window):
         main_window.setWindowTitle(QtGui.QApplication.translate("main_window", "main_window", None, QtGui.QApplication.UnicodeUTF8))
