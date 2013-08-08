@@ -39,11 +39,6 @@ class UI(object):
         #self.grid_layout.addWidget(self.tab_widget, 2, 0, 1, 1)
         self.grid_layout.addWidget(self.tab_widget, 1, 0, 1, 1)
 
-        #Browser
-        self.tab_count = 0
-        self.browsers = [] #An array of browsers. So we can use tabbed browsing.
-        self.browsers.append(QtWebKit.QWebView(main_window))
-
         self.grid_layout_2.addLayout(self.grid_layout, 0, 0, 1, 1)
         main_window.setCentralWidget(self.centralwidget)
 
@@ -102,18 +97,16 @@ class UI(object):
             #Otherwise, it's already a string.
             pass
 
-        self.tab_count += 1
-
+        next_tab = QtWebKit.QWebView(self.tab_widget)
         #Append a new QWebView to the browser array.
-        self.browsers.append(QtWebKit.QWebView(self.tab_widget))
         #Set this page's HTML.
-        self.browsers[self.tab_count].setHtml(page_builders.dispatch_link(page_link, self.everything))
+        next_tab.setHtml(page_builders.dispatch_link(page_link, self.everything))
         
-        self.handle_webview_events(self.browsers[self.tab_count])
+        self.handle_webview_events(next_tab)
+        self.tab_widget.addTab(next_tab, str(randint(0, 10000)))
 
-        self.tab_widget.addTab(self.browsers[self.tab_count], str(randint(0, 10000)))
-        self.tab_widget.setCurrentIndex(self.tab_count)
-        self.tab_widget.setCurrentWidget(self.browsers[self.tab_count])
+        self.tab_widget.setTabsClosable(True)
+        self.tab_widget.setCurrentWidget(next_tab)
 
     def handle_webview_events(self, webview):
         #This allows me to handle the links by myself.
@@ -140,17 +133,24 @@ class UI(object):
         print(self.hit_url.isEmpty())
 
     def connect_actions(self, main_window):
-        QtCore.QObject.connect(self.action_exit, QtCore.SIGNAL('triggered()'), QtCore.QCoreApplication.instance().quit)
-        QtCore.QObject.connect(self.action_load_xml, QtCore.SIGNAL('triggered()'), self.file_dialog)
-        QtCore.QObject.connect(self.action_openinnewtab, QtCore.SIGNAL('triggered()'), self.on_click_openinnewtab)
+        self.action_exit.triggered.connect(QtCore.QCoreApplication.instance().quit)
+        self.action_load_xml.triggered.connect(self.on_open_file_dialog)
+        self.action_openinnewtab.triggered.connect(self.on_click_openinnewtab)
+        self.tab_widget.tabCloseRequested.connect(self.on_close_tab)
+
+    def on_close_tab(self, index):
+        if self.tab_widget.count() == 1:
+            self.open_in_current_tab('sp0000')
+        else:
+            self.tab_widget.removeTab(index)
 
     def on_click_openinnewtab(self):
         self.open_in_new_tab(self.hit_url)
 
-    def file_dialog(self):
+    def on_open_file_dialog(self):
         self.file_dialog = QtGui.QFileDialog()
         self.file_dialog.setVisible(True)
-        QtCore.QObject.connect(self.file_dialog, QtCore.SIGNAL('accepted()'), self.xml_loaded)
+        self.file_dialog.accepted.connect(self.xml_loaded)
 
     def xml_loaded(self):
         selected = self.file_dialog.selectedFiles()[0]
