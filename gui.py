@@ -34,7 +34,7 @@ class UI(object):
         self.grid_layout.setObjectName("gridLayout")
 
         #Search bar
-        self.search_bar = QtGui.QLineEdit(self.centralwidget)
+        self.search_bar = QtGui.QLineEdit(main_window)
         self.search_bar.setText("")
         self.search_bar.setObjectName("lineEdit")
         self.grid_layout.addWidget(self.search_bar, 0, 0, 1, 1)
@@ -47,7 +47,7 @@ class UI(object):
         #Browser
         self.tab_count = 0
         self.browsers = [] #An array of browsers. So we can use tabbed browsing.
-        self.browsers.append(QtWebKit.QWebView(self.tab_widget))
+        self.browsers.append(QtWebKit.QWebView(main_window))
         self.browsers[0].setObjectName("textBrowser")
 
         self.grid_layout_2.addLayout(self.grid_layout, 0, 0, 1, 1)
@@ -75,19 +75,20 @@ class UI(object):
         self.action_exit = QtGui.QAction(main_window)
         self.action_exit.setObjectName("actionExit")
 
+        #Menu items
         self.menu_file.addAction(self.action_load_xml)
         self.menu_file.addSeparator()
         self.menu_file.addAction(self.action_exit)
         self.menubar.addAction(self.menu_file.menuAction())
         self.menubar.addAction(self.menuAbout.menuAction())
 
-        self.on_page_load('sp0000')
+        self.on_new_tab_page_load('sp0000')
 
         self.retranslateUi(main_window)
-        self.connectButtons(main_window)
+        self.connect_actions(main_window)
         QtCore.QMetaObject.connectSlotsByName(main_window)
     
-    def on_page_load(self, page_link):
+    def on_new_tab_page_load(self, page_link):
         print(page_link)
         try:
             #If it is a URL object, convert to a string first.
@@ -98,12 +99,32 @@ class UI(object):
 
         self.tab_count += 1
 
+        #Append a new QWebView to the browser array.
         self.browsers.append(QtWebKit.QWebView(self.tab_widget))
+        #Set this page's HTML.
         self.browsers[self.tab_count].setHtml(page_builders.dispatch_link(page_link, self.everything))
-        self.browsers[self.tab_count].page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateAllLinks)
-        self.browsers[self.tab_count].linkClicked.connect(self.on_page_load)
+        
+        self.handle_webview_events(self.browsers[self.tab_count])
 
         self.tab_widget.addTab(self.browsers[self.tab_count], str(randint(0, 10000)))
+        self.tab_widget.setCurrentIndex(self.tab_count)
+        self.tab_widget.setCurrentWidget(self.browsers[self.tab_count])
+
+    def handle_webview_events(self, webview):
+        #This allows me to handle the links by myself.
+        webview.page().setLinkDelegationPolicy(QtWebKit.QWebPage.DelegateAllLinks)
+        #Call this method anytime a link is clicked (for now...)
+        webview.linkClicked.connect(self.on_new_tab_page_load)
+        #web view now emits signal PySide.QtGui.QWidget.customContextMenuRequested
+        webview.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        webview.customContextMenuRequested.connect(self.context_menu_requested)
+
+    #This gets called when the user right-clicks on the web view. A QPoint is passed, which represents
+    #the location of the mouse click. We then test the page to see what is at that click location.
+    def context_menu_requested(self, pos):
+        hit_test = self.tab_widget.currentWidget().page().mainFrame().hitTestContent(pos)
+        hit_url = hit_test.linkUrl()
+        print(hit_url.isEmpty())
 
     def retranslateUi(self, main_window):
         main_window.setWindowTitle(QtGui.QApplication.translate("main_window", "main_window", None, QtGui.QApplication.UnicodeUTF8))
@@ -113,7 +134,7 @@ class UI(object):
         self.action_load_xml.setText(QtGui.QApplication.translate("main_window", "Load XML...", None, QtGui.QApplication.UnicodeUTF8))
         self.action_exit.setText(QtGui.QApplication.translate("main_window", "Exit", None, QtGui.QApplication.UnicodeUTF8))
 
-    def connectButtons(self, main_window):
+    def connect_actions(self, main_window):
         QtCore.QObject.connect(self.action_exit, QtCore.SIGNAL('triggered()'), QtCore.QCoreApplication.instance().quit)
         QtCore.QObject.connect(self.action_load_xml, QtCore.SIGNAL('triggered()'), self.file_dialog)
 
@@ -125,7 +146,7 @@ class UI(object):
     def xml_loaded(self):
         selected = self.file_dialog.selectedFiles()[0]
         self.everything = load_dict(selected)
-        self.on_page_load('hf6666')
+        self.on_new_tab_page_load('hf6666')
 
 app = QtGui.QApplication(sys.argv)
 wid = QtGui.QMainWindow()
