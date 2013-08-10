@@ -22,3 +22,9 @@ I'd like to do things that other DF legends browsers don't do well, namely:
 * qt4
 * qtwebkit (Install this before building PySide, or else it will build successfully without QtWebKit support.)
 * pyside
+* Python3
+
+####Ubuntu packages
+* python-lxml
+* qt4-default
+* pyside
