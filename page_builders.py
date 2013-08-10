@@ -83,7 +83,18 @@ def build_hf_page(an_id, everything):
     page += "<div class='page-content'><p><b class='hf-name-occurence'>"\
                    + hf_name + "</b> was born on the " +\
                    time_string(get_hf(an_id, everything)['birth_seconds72']) +\
-                   ", Year " + get_hf(an_id, everything)['birth_year'] + ".</p></div>"
+                   ", Year " + get_hf(an_id, everything)['birth_year'] + ".</p>"
+                   
+                   
+    page += "<hr>"
+                   
+    for relationship_data in get_hf(an_id, everything)['hf_links']:
+        page += "<p>" + capitalize(relationship_data['link_type']) + ' : ' +\
+                "<a href='hf" + relationship_data['hfid'] + "' class='entity-link' >" +\
+                get_hf_name(relationship_data['hfid'], everything) +\
+                "</a></p>"
+                   
+    page += "</div>"
 
     page += "<div class='memberships'>"#<ul>"
     
