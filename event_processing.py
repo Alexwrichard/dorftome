@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from attribute_getters import *
+from link_creator import *
 
 def event_type_dispatcher(event_id, everything):
     #Probably could have avoided this with string replacing and reflection magic,
@@ -59,7 +60,20 @@ def event_type_dispatcher(event_id, everything):
         event_data = get_element(event_id, 'historical_events', everything)
         #This might look confusing, but it's just a function call to 
         #whatever function matches up in the above dictionary.
-        return types[event_type](event_data, everything)
+        return date_string(event_data) + " " + types[event_type](event_data, everything)
+
+
+
+'''
+Format the year and date to be consistent
+'''
+def date_string(data):
+    output = ""
+    if int(data['year']) < 0:
+        output += "At the beginning of the world,"
+    else:
+        output += "In " + data['year'] + ", " + time_string(data['seconds72']) + ","
+    return output
 
 '''
 Historical event occurence is measured in seconds. Here, we will convert
@@ -95,155 +109,152 @@ def suffix_date(date):
     else:
         return str(date) + 'th'
 
-# Just for the record, I created the skeleton for the rest of this file in about 2 minutes
-# using Vim's q-recording feature, the dictionary above, and about 40 keystrokes.
-
-# Yeah. Vim is that great.
+# Events=============
 
 def add_hf_entity_link(data, everything):
-    pass
+    return "" + str(data)
 
 def add_hf_hf_link(data, everything):
-    pass
+    return(create_hf_link(data['hfid'], everything) + " married/worshipped/imprisoned " + create_hf_link(data['hfid_target'], everything))
 
 def add_hf_site_link(data, everything):
-    pass
+    return "" + str(data)
 
 def artifact_created(data, everything):
-    pass
+    return "" + str(data)
 
 def attacked_site(data, everything):
-    pass
+    return "" + str(data)
 
 def body_abused(data, everything):
-    pass
+    return "" + str(data)
 
 def change_hf_job(data, everything):
-    pass
+    return(create_hf_link(data['hfid'], everything) + " changed their job at " + get_site_name(data['site_id'], everything))
 
 def change_hf_state(data, everything):
-    pass
+    return(create_hf_link(data['hfid'], everything) + " started " + data['state'] + " at " + get_site_name(data['site_id'], everything) + " Coordinates: " + data['coords'])
+
 
 def changed_creature_type(data, everything):
-    return(get_hf_name(data['changer_hfid'], everything) + ' transformed ' + 
-          get_hf_name(data['changee_hfid'], everything) + ' from a ' + data['old_caste'] + 
-          ' ' + data['old_race'] + ' to a ' + data['new_caste'] + ' ' +
-          data['new_race'] + ' on the ' + time_string(data['seconds72']) + ', ' + 
-          data['year'] + '.')
+    return(create_hf_link(data['changer_hfid'], everything) + ' transformed ' + 
+          create_hf_link(data['changee_hfid'], everything) + ' from a ' + str(data['old_caste']) + 
+          ' ' + str(data['old_race']) + ' to a ' + str(data['new_caste']) + ' ' +
+          data['new_race'])
 
 def create_entity_position(data, everything):
-    pass
+    return "" + str(data)
 
 def created_site(data, everything):
-    pass
+    return "" + str(data)
 
 def created_structure(data, everything):
-    pass
+    return "" + str(data)
 
 def created_world_construction(data, everything):
-    pass
+    return "" + str(data)
 
 def creature_devoured(data, everything):
-    pass
+    return "" + str(data)
 
 def destroyed_site(data, everything):
-    pass
+    return "" + str(data)
 
 def diplomat_lost(data, everything):
-    pass
+    return "" + str(data)
 
 def entity_created(data, everything):
-    pass
+    return "" + str(data)
 
 def field_battle(data, everything):
-    pass
+    return "" + str(data)
 
 def hf_abducted(data, everything):
-    pass
+    return "" + str(data)
 
 def hf_died(data, everything):
-    pass
+    return "" + str(data)
 
 def hf_new_pet(data, everything):
-    pass
+    return "" + str(data)
 
 def hf_razed_structure(data, everything):
-    pass
+    return "" + str(data)
 
 def hf_reunion(data, everything):
-    pass
+    return "" + str(data)
 
 def hf_revived(data, everything):
-    pass
+    return "" + str(data)
 
 def hf_simple_battle_event(data, everything):
-    pass
+    return(create_hf_link(data['group_1_hfid'], everything)  + " " + data['subtype'] + " with " + create_hf_link(data['group_2_hfid'], everything) + " at " + get_site_name(data['site_id'], everything))
 
 def hf_travel(data, everything):
-    pass
+    return "" + str(data)
 
 def hf_wounded(data, everything):
-    pass
+    return "" + str(data)
 
 def impersonate_hf(data, everything):
-    pass
+    return "" + str(data)
 
 def item_stolen(data, everything):
-    pass
+    return "" + str(data)
 
 def masterpiece_arch_constructed(data, everything):
-    pass
+    return "" + str(data)
 
 def masterpiece_arch_design(data, everything):
-    pass
+    return "" + str(data)
 
 def masterpiece_engraving(data, everything):
-    pass
+    return "" + str(data)
 
 def masterpiece_food(data, everything):
-    pass
+    return "" + str(data)
 
 def masterpiece_item(data, everything):
-    pass
+    return "" + str(data)
 
 def masterpiece_item_improvement(data, everything):
-    pass
+    return "" + str(data)
 
 def masterpiece_lost(data, everything):
-    pass
+    return "" + str(data)
 
 def merchant(data, everything):
-    pass
+    return "" + str(data)
 
 def new_site_leader(data, everything):
-    pass
+    return "" + str(data)
 
 def peace_accepted(data, everything):
-    pass
+    return "" + str(data)
 
 def peace_rejected(data, everything):
-    pass
+    return "" + str(data)
 
 def razed_structure(data, everything):
-    pass
+    return "" + str(data)
 
 def reclaim_site(data, everything):
-    pass
+    return "" + str(data)
 
 def remove_hf_site_link(data, everything):
-    pass
+    return "" + str(data)
 
 def remove_hf_entity_link(data, everything):
-    pass
+    return "" + str(data)
 
 def replaced_structure(data, everything):
-    pass
+    return "" + str(data)
 
 def site_abandoned(data, everything):
-    pass
+    return "" + str(data)
 
 def site_died(data, everything):
-    pass
+    return "" + str(data)
 
 def site_taken_over(data, everything):
-    pass
+    return "" + str(data)

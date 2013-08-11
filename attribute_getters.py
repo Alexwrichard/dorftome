@@ -31,6 +31,9 @@ def get_name(an_id, a_type, everything):
 
 # (In alphabetical order...)
 
+def get_event(event_id, everything):
+    return everything['historical_events'][int(event_id) - everything['historical_events_offset']]
+    
 def get_event_type(an_id, everything):
     return everything['historical_events'][int(an_id) - everything['historical_events_offset']]['type']
 
@@ -54,3 +57,6 @@ def get_hf_name(an_id, everything):
 
 def get_hf_race(an_id, everything):
     return capitalize(get_element(an_id, 'historical_figures', everything)['race'])
+    
+def get_site_name(site_id, everything):
+    return capitalize(get_name(site_id, 'sites', everything))

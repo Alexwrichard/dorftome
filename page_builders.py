@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 from attribute_getters import *
+from link_creator import *
 from event_processing import time_string, event_type_dispatcher
 from PySide import QtGui, QtCore
 
 CSS_STR = \
         "\
         body {\
-            background-color:#555555;\
+            background-color:#444444;\
         }\
         a.entity-link:link {\
             text-decoration:none;\
@@ -30,7 +31,7 @@ CSS_STR = \
         }\
         .page-content {\
             font-family:Garamond, serif;\
-            font-size:13px;\
+            font-size:16px;\
             float:left;\
         }\
         .page-description {\
@@ -72,27 +73,26 @@ def build_hf_page(an_id, everything):
             <h3 class='page-description'>" + get_hf_gender(an_id, everything) +\
             " " + get_hf_race(an_id, everything) + "</h3><hr>"
 
-    #For each event, we will try to get an event string from the event dispatcher,
-    #then put it on the page (TODO hopefully in a more ceremonious manner eventually).
-    for event_id in get_hf_events(an_id, everything):
-        event_str = event_type_dispatcher(event_id, everything)
-        if(event_str is not None):
-            event_strings.append(event_str)
-            page += event_str
-
     page += "<div class='page-content'><p><b class='hf-name-occurence'>"\
-                   + hf_name + "</b> was born on the " +\
+                   + hf_name + "</b> was born "
+    
+    birth_year = get_hf(an_id, everything)['birth_year']
+    if int(birth_year) >= 0:
+         page += "on the " +\
                    time_string(get_hf(an_id, everything)['birth_seconds72']) +\
                    ", Year " + get_hf(an_id, everything)['birth_year'] + ".</p>"
-                   
+    else:
+        page += "at the beginning of the world"
                    
     page += "<hr>"
                    
     for relationship_data in get_hf(an_id, everything)['hf_links']:
-        page += "<p>" + capitalize(relationship_data['link_type']) + ' : ' +\
-                "<a href='hf" + relationship_data['hfid'] + "' class='entity-link' >" +\
-                get_hf_name(relationship_data['hfid'], everything) +\
-                "</a></p>"
+        page += "<p>" + capitalize(relationship_data['link_type']) + ' : ' + create_hf_link(relationship_data['hfid'], everything) + "</p>"
+                
+    page += "<hr>"
+    
+    for event_id in get_hf_events(an_id, everything):
+        page += event_type_dispatcher(event_id, everything) + "<br>"
                    
     page += "</div>"
 
@@ -100,9 +100,7 @@ def build_hf_page(an_id, everything):
     
     #For each entity link, we will add that entity to the membership list.
     for entity_data in get_hf(an_id, everything)['entity_links']:
-        page += "<p><a href='en" + entity_data['entity_id'] + "' class='entity-link' >" +\
-                get_ent_name(entity_data['entity_id'], everything) +\
-                "</a></p>"
+        page += "<p>" + create_entity_link(entity_data['entity_id'], everything) + "</p>"
     page += "</div>"#"</ul></div>"
 
     page += "</body></html>"
