@@ -28,3 +28,9 @@ I'd like to do things that other DF legends browsers don't do well, namely:
 * python3-lxml
 * qt4-default
 * python3-pyside
+
+####Arch packages
+* python-lxml
+* qt4
+* qtwebkit
+* python-pyside (from the Arch User Repository)
