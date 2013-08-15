@@ -87,7 +87,10 @@ class UI(object):
             page_link = page_link.toString()
         except:
             pass
-        self.tab_widget.currentWidget().setHtml(page_builders.dispatch_link(page_link, self.everything))
+        html = page_builders.dispatch_link(page_link, self.everything)
+        if(page_link[:2] == "hf"):
+            print(html)
+        self.tab_widget.currentWidget().setHtml(html)
 
     def open_in_new_tab(self, page_link):
         try:
@@ -155,7 +158,7 @@ class UI(object):
     def xml_loaded(self):
         selected = self.file_dialog.selectedFiles()[0]
         self.everything = load_dict(selected)
-        self.open_in_new_tab('hf6666')
+        self.open_in_current_tab('hf6666')
 
 app = QtGui.QApplication(sys.argv)
 wid = QtGui.QMainWindow()

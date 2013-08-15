@@ -1,0 +1,43 @@
+body {
+    background-color:#444444;
+}
+
+a.entity-link:link {
+    text-decoration:none;
+    color:#448844;
+}
+
+a.entity-link:hover {
+    text-decoration:none;
+    color:#DDDDDD;
+}
+
+.hf-name-occurence {
+    font-family:Helvetica, sans-serif;
+    font-size:14px;
+}
+
+.memberships {
+    font-family:Helvetica, sans-serif;
+    float:right;
+    color:#FF0000;
+    padding:10px;
+    border: 2px solid;
+    border-color: #222222;
+}
+
+p.page-content {
+    font-family:Garamond, serif;
+    font-size:16px;
+    float:left;
+}
+
+.page-description {
+    color:#999999;
+    font-family:Helvetica, sans-serif;
+}
+
+.page-title {
+    color:#BBBBBB;
+    font-family:Helvetica, sans-serif;
+}

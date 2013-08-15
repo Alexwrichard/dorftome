@@ -4,44 +4,16 @@ from link_creator import *
 from event_processing import time_string, event_type_dispatcher
 from PySide import QtGui, QtCore
 
-CSS_STR = \
-        "\
-        body {\
-            background-color:#444444;\
-        }\
-        a.entity-link:link {\
-            text-decoration:none;\
-            color:#448844;\
-        }\
-        a.entity-link:hover {\
-            text-decoration:none;\
-            color:#DDDDDD;\
-        }\
-        .hf-name-occurence {\
-            font-family:Helvetica, sans-serif;\
-            font-size:14px;\
-        }\
-        .memberships {\
-            font-family:Helvetica, sans-serif;\
-            float:right;\
-            color:#FF0000;\
-            padding:10px;\
-            border: 2px solid;\
-            border-color: #222222;\
-        }\
-        .page-content {\
-            font-family:Garamond, serif;\
-            font-size:16px;\
-            float:left;\
-        }\
-        .page-description {\
-            color:#999999;\
-            font-family:Helvetica, sans-serif;\
-        }\
-        .page-title {\
-            color:#BBBBBB;\
-            font-family:Helvetica, sans-serif;\
-        }"
+CSS_STR = None
+
+'''
+Load the stylesheet from an external file
+'''
+def load_css():
+    global CSS_STR
+    f = open("master.css")
+    CSS_STR = f.read()
+    f.close()
 
 '''
 LINK CONVENTIONS:
@@ -50,6 +22,8 @@ en#### = entity
 hf#### = historical figure
 '''
 def dispatch_link(page_link, everything):
+    if CSS_STR is None:
+        load_css()
     code = page_link[:2]
     dispatcher = {
                   'en' : build_entity_page,
@@ -57,6 +31,14 @@ def dispatch_link(page_link, everything):
                   'sp' : build_splash_page,
                  }
     return dispatcher[code](int(page_link[2:]), everything)
+
+'''
+Return a CSS class name for a given event. This allows us to grab
+all events of a specific type in JavaScript/JQuery, which will in
+turn allow for some dynamic page categorization/organization.
+'''
+def css_classify_event(event_id, everything):
+    return get_event_type(event_id, everything).replace(" ","-")
 
 '''
 Given an id, return an HTML string describing that historical figure.
@@ -94,7 +76,8 @@ def build_hf_page(an_id, everything):
     page += "<hr>"
     
     for event_id in get_hf_events(an_id, everything):
-        page += event_type_dispatcher(event_id, everything) + "<br>"
+        event_class = css_classify_event
+        page += "<p>" + event_type_dispatcher(event_id, everything) + "</p>"
                    
     page += "</div>"
     page += "<div class='memberships'>"
