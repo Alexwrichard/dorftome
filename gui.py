@@ -4,8 +4,6 @@
 #      by: pyside-uic 0.2.14 running on PySide 1.2.0
 
 import sys
-import os
-import unicodedata
 from xml_parsing import load_dict
 import page_builders
 from PySide import QtCore, QtGui, QtWebKit
@@ -123,8 +121,8 @@ class UI(object):
         #websettings.setFontSize(QtWebKit.QWebSettings.DefaultFontSize, 12)
         #websettings.setFontFamily(QtWebKit.QWebSettings.StandardFont, "serif")
 
-        path = os.getcwd()
-        websettings.setUserStyleSheetUrl(QtCore.QUrl.fromLocalFile(path + "/master.css"))
+        #path = os.getcwd()
+        #websettings.setUserStyleSheetUrl(QtCore.QUrl.fromLocalFile(path + "/master.css"))
 
     #This gets called when the user right-clicks on the web view. A QPoint is passed, which represents
     #the location of the mouse click. We then test the page to see what is at that click location.
