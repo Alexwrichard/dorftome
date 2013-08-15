@@ -45,6 +45,7 @@ CSS_STR = \
 
 '''
 LINK CONVENTIONS:
+sp0000 = splash page
 en#### = entity
 hf#### = historical figure
 '''
