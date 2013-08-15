@@ -4,6 +4,8 @@
 #      by: pyside-uic 0.2.14 running on PySide 1.2.0
 
 import sys
+import os
+import unicodedata
 from xml_parsing import load_dict
 import page_builders
 from PySide import QtCore, QtGui, QtWebKit
@@ -88,8 +90,6 @@ class UI(object):
         except:
             pass
         html = page_builders.dispatch_link(page_link, self.everything)
-        if(page_link[:2] == "hf"):
-            print(html)
         self.tab_widget.currentWidget().setHtml(html)
 
     def open_in_new_tab(self, page_link):
@@ -101,11 +101,11 @@ class UI(object):
             pass
 
         next_tab = QtWebKit.QWebView(self.tab_widget)
+        self.handle_webview_events(next_tab)
         #Append a new QWebView to the browser array.
         #Set this page's HTML.
         next_tab.setHtml(page_builders.dispatch_link(page_link, self.everything))
         
-        self.handle_webview_events(next_tab)
         self.tab_widget.addTab(next_tab, str(randint(0, 10000)))
 
         self.tab_widget.setTabsClosable(True)
@@ -119,6 +119,12 @@ class UI(object):
         #web view now emits signal PySide.QtGui.QWidget.customContextMenuRequested
         webview.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         webview.customContextMenuRequested.connect(self.context_menu_requested)
+        websettings = webview.settings()
+        #websettings.setFontSize(QtWebKit.QWebSettings.DefaultFontSize, 12)
+        #websettings.setFontFamily(QtWebKit.QWebSettings.StandardFont, "serif")
+
+        path = os.getcwd()
+        websettings.setUserStyleSheetUrl(QtCore.QUrl.fromLocalFile(path + "/master.css"))
 
     #This gets called when the user right-clicks on the web view. A QPoint is passed, which represents
     #the location of the mouse click. We then test the page to see what is at that click location.

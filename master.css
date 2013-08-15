@@ -13,12 +13,12 @@ a.entity-link:hover {
 }
 
 .hf-name-occurence {
-    font-family:Helvetica, sans-serif;
+    font-family:Helvetica,sans-serif;
     font-size:14px;
 }
 
 .memberships {
-    font-family:Helvetica, sans-serif;
+    font-family:Helvetica,sans-serif;
     float:right;
     color:#FF0000;
     padding:10px;
@@ -26,18 +26,23 @@ a.entity-link:hover {
     border-color: #222222;
 }
 
+p {
+    font-family:Helvetica,sans-serif;
+    font-size:12px;
+}
+
 p.page-content {
-    font-family:Garamond, serif;
+    font-family:Helvetica,sans-serif;
     font-size:16px;
     float:left;
 }
 
 .page-description {
     color:#999999;
-    font-family:Helvetica, sans-serif;
+    font-family:Helvetica,sans-serif;
 }
 
 .page-title {
     color:#BBBBBB;
-    font-family:Helvetica, sans-serif;
+    font-family:"Times New Roman",Garamond,serif;
 }

@@ -33,7 +33,8 @@ def dispatch_link(page_link, everything):
     return dispatcher[code](int(page_link[2:]), everything)
 
 '''
-Return a CSS class name for a given event. This allows us to grab
+Return a CSS class name for a given event. All events of the same
+type will have the same CSS class. This allows us to grab
 all events of a specific type in JavaScript/JQuery, which will in
 turn allow for some dynamic page categorization/organization.
 '''
@@ -50,7 +51,7 @@ def build_hf_page(an_id, everything):
 
     #Beginning HTML for the historical figure page.
     page = "<html><head>\
-            <style type='text/css'>" + CSS_STR + "</style>\
+            <style>" + CSS_STR + "</style>\
             </head><body>\
             <h1 class='page-title'>" + hf_name + "</h1>\
             <h3 class='page-description'>" + get_hf_gender(an_id, everything) +\
