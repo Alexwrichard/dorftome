@@ -82,10 +82,11 @@ def build_hf_page(an_id, everything):
                    time_string(get_hf(an_id, everything)['birth_seconds72']) +\
                    ", Year " + get_hf(an_id, everything)['birth_year'] + ".</p>"
     else:
-        page += "at the beginning of the world"
+        page += "at the beginning of the world."
                    
     page += "<hr>"
                    
+    #Eventually, it would be cool to find a way to display this as a tree.
     for relationship_data in get_hf(an_id, everything)['hf_links']:
         page += "<p>" + capitalize(relationship_data['link_type']) + ' : ' + create_hf_link(relationship_data['hfid'], everything) + "</p>"
                 
@@ -95,13 +96,12 @@ def build_hf_page(an_id, everything):
         page += event_type_dispatcher(event_id, everything) + "<br>"
                    
     page += "</div>"
-
-    page += "<div class='memberships'>"#<ul>"
+    page += "<div class='memberships'>"
     
     #For each entity link, we will add that entity to the membership list.
     for entity_data in get_hf(an_id, everything)['entity_links']:
         page += "<p>" + create_entity_link(entity_data['entity_id'], everything) + "</p>"
-    page += "</div>"#"</ul></div>"
+    page += "</div>"
 
     page += "</body></html>"
 

@@ -50,13 +50,21 @@ def get_hf_events(an_id, everything):
     return get_element(an_id,  'historical_figures', everything)['events']
 
 def get_hf_gender(an_id, everything):
-    return capitalize(get_element(an_id, 'historical_figures', everything)['caste'])
+    try:
+        return capitalize(get_element(an_id, 'historical_figures', everything)['caste'])
+    except KeyError:
+        #Has no gender... Happens for deities.
+        return ""
 
 def get_hf_name(an_id, everything):
     return get_name(an_id, 'historical_figures', everything)
 
 def get_hf_race(an_id, everything):
-    return capitalize(get_element(an_id, 'historical_figures', everything)['race'])
+    try:
+        return capitalize(get_element(an_id, 'historical_figures', everything)['race'])
+    except KeyError:
+        #Has no race... so it's a deity.
+        return "Deity"
     
 def get_site_name(site_id, everything):
     return capitalize(get_name(site_id, 'sites', everything))
