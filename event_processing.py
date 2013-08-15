@@ -109,7 +109,7 @@ def suffix_date(date):
     else:
         return str(date) + 'th'
 
-# Events=============
+#========>--EVENTS--<==========
 
 def add_hf_entity_link(data, everything):
     return "" + str(data)
@@ -130,10 +130,12 @@ def body_abused(data, everything):
     return "" + str(data)
 
 def change_hf_job(data, everything):
-    return(create_hf_link(data['hfid'], everything) + " changed their job at " + get_site_name(data['site_id'], everything))
+    return(create_hf_link(data['hfid'], everything) + " changed their job at " + 
+            get_site_name(data['site_id'], everything))
 
 def change_hf_state(data, everything):
-    return(create_hf_link(data['hfid'], everything) + " started " + data['state'] + " at " + get_site_name(data['site_id'], everything) + " Coordinates: " + data['coords'])
+    return(create_hf_link(data['hfid'], everything) + " started " + data['state'] + 
+            " at " + get_site_name(data['site_id'], everything) + " Coordinates: " + data['coords'])
 
 
 def changed_creature_type(data, everything):
@@ -188,7 +190,10 @@ def hf_revived(data, everything):
     return "" + str(data)
 
 def hf_simple_battle_event(data, everything):
-    return(create_hf_link(data['group_1_hfid'], everything)  + " " + data['subtype'] + " with " + create_hf_link(data['group_2_hfid'], everything) + " at " + get_site_name(data['site_id'], everything))
+    return(create_hf_link(data['group_1_hfid'], everything) + " " + 
+            grammarify_battle_verb(data['subtype']) + " " + 
+            create_hf_link(data['group_2_hfid'], everything) + " at " + 
+            get_site_name(data['site_id'], everything))
 
 def hf_travel(data, everything):
     return "" + str(data)
@@ -258,3 +263,21 @@ def site_died(data, everything):
 
 def site_taken_over(data, everything):
     return "" + str(data)
+
+#====>--HELPERS--<==== 
+
+'''
+Takes a hf simple battle subtype (e.g. "scuffle") and returns
+a string like "scuffled with".
+'''
+def grammarify_battle_verb(subtype):
+    corrected = {
+                 "scuffle" : "scuffled with",
+                 "attacked" : "attacked",
+                 #I honestly don't know what some of these things are supposed to mean.
+                 "2 lost after receiving wounds" : "retreated after receiving wounds from",
+                 "ambushed" : "ambushed",
+                 "happen upon" : "happened upon",
+                 "confront" : "confronted",
+                 }
+    return corrected[subtype]

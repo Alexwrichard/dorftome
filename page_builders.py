@@ -2,7 +2,6 @@
 from attribute_getters import *
 from link_creator import *
 from event_processing import time_string, event_type_dispatcher
-from PySide import QtGui, QtCore
 
 CSS_STR = None
 
@@ -108,7 +107,9 @@ def build_splash_page(dummy, dummy2):
              </head><body>\
              <h1 class='page-title'> Welcome! </h1>\
              <hr>\
+             <div class='page-content'>\
              <p class='plain-text'>To begin browsing, select File > Load XML and locate the correct file.</p>\
+             </div>\
              </body></html>"
 
     return string

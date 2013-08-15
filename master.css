@@ -12,6 +12,16 @@ a.entity-link:hover {
     color:#DDDDDD;
 }
 
+a.hf-link:link {
+    text-decoration:none;
+    color:#7777aa;
+}
+
+a.hf-link:hover {
+    text-decoration:none;
+    color:#999999;
+}
+
 .hf-name-occurence {
     font-family:Helvetica,sans-serif;
     font-size:14px;
@@ -26,15 +36,13 @@ a.entity-link:hover {
     border-color: #222222;
 }
 
-p {
-    font-family:Helvetica,sans-serif;
-    font-size:12px;
+.page-content {
+    float:left;
 }
 
-p.page-content {
-    font-family:Helvetica,sans-serif;
-    font-size:16px;
-    float:left;
+.page-content p {
+    font-family:Garamond,serif;
+    font-size:14px;
 }
 
 .page-description {
