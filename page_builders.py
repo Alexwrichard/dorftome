@@ -56,7 +56,7 @@ def build_hf_page(an_id, everything):
             <h3 class='page-description'>" + get_hf_gender(an_id, everything) +\
             " " + get_hf_race(an_id, everything) + "</h3><hr>"
 
-    page += "<div class='page-content'><p><b class='hf-name-occurence'>"\
+    page += "<div class='page-content' id='pagecontent'><p><b class='hf-name-occurence'>"\
                    + hf_name + "</b> was born "
     
     birth_year = get_hf(an_id, everything)['birth_year']
@@ -85,7 +85,12 @@ def build_hf_page(an_id, everything):
     #For each entity link, we will add that entity to the membership list.
     for entity_data in get_hf(an_id, everything)['entity_links']:
         page += "<p>" + create_entity_link(entity_data['entity_id'], everything) + "</p>"
-    page += "</div>"
+    page += "</div>\
+             <script>\
+                 elem = document.getElementById('pagecontent');\
+                 alert(window.getComputedStyle(elem, null).getPropertyValue(\"font-family\"));\
+             </script>\
+             "
 
     page += "</body></html>"
 
