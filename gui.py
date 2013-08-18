@@ -4,7 +4,7 @@
 #      by: pyside-uic 0.2.14 running on PySide 1.2.0
 
 import sys
-from xml_parsing import load_dict
+from xml_parsing import load_dict, handle_invalid_file
 import page_builders
 from PySide import QtCore, QtGui, QtWebKit
 from random import randint
@@ -161,7 +161,15 @@ class UI(object):
 
     def xml_loaded(self):
         selected = self.file_dialog.selectedFiles()[0]
-        self.everything = load_dict(selected)
+        
+        try:
+            self.everything = load_dict(selected)
+        except Exception as e:
+            self.everything = None
+            
+        if self.everything == None:
+            new_selected = handle_invalid_file(selected)
+            self.everything = load_dict(new_selected)
         self.open_in_current_tab('hf6666')
 
 app = QtGui.QApplication(sys.argv)
