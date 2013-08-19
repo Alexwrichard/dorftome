@@ -85,12 +85,12 @@ def build_hf_page(an_id, everything):
     #For each entity link, we will add that entity to the membership list.
     for entity_data in get_hf(an_id, everything)['entity_links']:
         page += "<p>" + create_entity_link(entity_data['entity_id'], everything) + "</p>"
-    page += "</div>\
-             <script>\
-                 elem = document.getElementById('pagecontent');\
-                 alert(window.getComputedStyle(elem, null).getPropertyValue(\"font-family\"));\
-             </script>\
-             "
+    page += "</div>"\
+             #<script>\
+             #    elem = document.getElementById('pagecontent');\
+             #    alert(window.getComputedStyle(elem, null).getPropertyValue(\"font-family\"));\
+             #</script>\
+             #"
 
     page += "</body></html>"
 

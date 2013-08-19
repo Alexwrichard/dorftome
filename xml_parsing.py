@@ -45,7 +45,7 @@ def load_dict(filename):
     everything = {}
  
     #There are a handful of "upper-level" tags. This includes historical_figures, sites, entities, etc.
-    #Loop through these. Inefficiency... the lower-level tags are looped through, but just ignored.
+    #Loop through these. TODO Inefficiency... the lower-level tags are looped through, but just ignored.
     
     upper_level_tags = ["regions", "underground_regions", "sites", "world_constructions", "artifacts", "historical_figures", "entity_populations", "entities", "historical_events", "historical_event_collections", "historical_eras"]
     
