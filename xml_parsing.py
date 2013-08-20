@@ -5,6 +5,7 @@ from attribute_getters import *
 from event_processing import event_type_dispatcher
 import os
 import codecs
+import time
 
 def handle_invalid_file(filename):
     print("Attempting to fix invalid file: " + filename)
@@ -49,6 +50,10 @@ def load_dict(filename):
     
     upper_level_tags = ["regions", "underground_regions", "sites", "world_constructions", "artifacts", "historical_figures", "entity_populations", "entities", "historical_events", "historical_event_collections", "historical_eras"]
     
+    #timing info
+    time_array = []
+    start_time = time.clock()
+    
     for _, element in parser:
         
         if element.tag in upper_level_tags:
@@ -65,9 +70,19 @@ def load_dict(filename):
             #set 'historical_figures_offset' to 5764. So then, accessing an element is easy and efficient; we just need to do
             #everything[element_type][id - offset]
             everything[element.tag + '_offset'] = element_data[1]
-            close_element(element)            
+            close_element(element)
+            
+            #timing info
+            time_array.append([element.tag, time.clock() - start_time])
         
+    start_time = time.clock()
     parse_historical_events(everything)
+    time_array.append(['parsing historical events', time.clock() - start_time])
+    
+    print("\n\nTIMING INFO:\n")
+    for e, t in time_array:
+        print("Time taken for " + e + ": " + str(t) + "s")
+        
     return everything
     
 def close_element(element):
@@ -205,3 +220,19 @@ def parse_historical_events(everything):
         for i in get_element(var, 'historical_figures', everything)['events']:
             print_event_info(i, everything)
     '''
+
+
+#TIMING INFO:
+
+#Time taken for regions: 0.020000000000000018s
+#Time taken for underground_regions: 0.020000000000000018s
+#Time taken for sites: 0.050000000000000044s
+#Time taken for world_constructions: 0.050000000000000044s
+#Time taken for artifacts: 0.050000000000000044s
+#Time taken for historical_figures: 11.61s
+#Time taken for entity_populations: 11.71s
+#Time taken for entities: 11.75s
+#Time taken for historical_events: 27.509999999999998s
+#Time taken for historical_event_collections: 31.369999999999997s
+#Time taken for historical_eras: 31.369999999999997s
+#Time taken for parsing historical events: 8.410000000000004s
