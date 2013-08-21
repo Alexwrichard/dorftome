@@ -7,6 +7,15 @@ import os
 import codecs
 import time
 
+PROFILE_MEMORY = True
+PROFILE_TIME = True
+
+try:
+    from pympler.asizeof import asizeof
+except Exception as e:
+    PROFILE_MEMORY = False
+    PROFILE_TIME = False
+
 def handle_invalid_file(filename):
     print("Attempting to fix invalid file: " + filename)
     BLOCKSIZE = 1048576 # one megabyte
@@ -44,15 +53,20 @@ def load_dict(filename):
     parser = etree.iterparse(filename)
         
     everything = {}
- 
+    
     #There are a handful of "upper-level" tags. This includes historical_figures, sites, entities, etc.
     #Loop through these. TODO Inefficiency... the lower-level tags are looped through, but just ignored.
     
     upper_level_tags = ["regions", "underground_regions", "sites", "world_constructions", "artifacts", "historical_figures", "entity_populations", "entities", "historical_events", "historical_event_collections", "historical_eras"]
     
-    #timing info
-    time_array = []
-    start_time = time.clock()
+    #PROFILING
+    if PROFILE_TIME:
+        time_array = []
+        start_time = time.clock()
+    
+    if PROFILE_MEMORY:
+        memory_array = []
+        memory_array.append(("At beginning : ", asizeof(everything)))
     
     for _, element in parser:
         
@@ -72,17 +86,41 @@ def load_dict(filename):
             everything[element.tag + '_offset'] = element_data[1]
             close_element(element)
             
-            #timing info
-            time_array.append([element.tag, time.clock() - start_time])
+            if PROFILE_TIME:
+                time_array.append([element.tag, time.clock() - start_time])
+                start_time = time.clock() #measure time until next high-level tag is finished
+                
+            if PROFILE_MEMORY:
+                memory_array.append(("Finishing " + element.tag + ": ", asizeof(everything)))
         
-    start_time = time.clock()
+    if PROFILE_TIME:
+        start_time = time.clock()
+        
     parse_historical_events(everything)
-    time_array.append(['parsing historical events', time.clock() - start_time])
     
-    print("\n\nTIMING INFO:\n")
-    for e, t in time_array:
-        print("Time taken for " + e + ": " + str(t) + "s")
+    if PROFILE_TIME:
+        time_array.append(['parsing historical events', time.clock() - start_time])
+    
+    if PROFILE_MEMORY:
+        memory_array.append(("After parsing historical events: ", asizeof(everything)))
+    
+    #PRINT PROFILING INFO
+    if PROFILE_TIME:
+        total_time = 0
+        print("\n\nTIMING INFO:")
+        for e, t in time_array:
+            print("Time taken for " + e + ": " + str(t) + "s")
+            total_time += t
+        print("Total time: " + str(total_time) + "s")
         
+    if PROFILE_MEMORY:
+        print("\n\nMEMORY INFO:")
+        for i in range(0, len(memory_array)):
+            difference = 0
+            if (i >= 1):
+                difference = memory_array[i][1] - memory_array[i-1][1]
+            print(memory_array[i][0] + " : " + str(memory_array[i][1]/1024) + " KB || Difference: " + str(difference/1024) + " KB")
+            
     return everything
     
 def close_element(element):
@@ -221,18 +259,3 @@ def parse_historical_events(everything):
             print_event_info(i, everything)
     '''
 
-
-#TIMING INFO:
-
-#Time taken for regions: 0.020000000000000018s
-#Time taken for underground_regions: 0.020000000000000018s
-#Time taken for sites: 0.050000000000000044s
-#Time taken for world_constructions: 0.050000000000000044s
-#Time taken for artifacts: 0.050000000000000044s
-#Time taken for historical_figures: 11.61s
-#Time taken for entity_populations: 11.71s
-#Time taken for entities: 11.75s
-#Time taken for historical_events: 27.509999999999998s
-#Time taken for historical_event_collections: 31.369999999999997s
-#Time taken for historical_eras: 31.369999999999997s
-#Time taken for parsing historical events: 8.410000000000004s
