@@ -20,7 +20,7 @@ a_type = The category, e.g. 'historical_figures'
 Given these, will return an element from the database, accounting for the possible offset.
 '''
 def get_element(an_id, a_type, everything):  
-    return everything[a_type][int(an_id) - everything[a_type + '_offset']]
+    return everything[a_type][an_id - everything[a_type + '_offset']]
 
 def get_name(an_id, a_type, everything):
     return capitalize(get_element(an_id, a_type, everything)['name'])
