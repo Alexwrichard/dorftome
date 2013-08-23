@@ -69,7 +69,7 @@ Format the year and date to be consistent
 '''
 def date_string(data):
     output = ""
-    if data['year'] < 0:
+    if 'year' not in data.keys() or data['year'] < 0:
         output += "At the beginning of the world,"
     else:
         output += "In " + str(data['year']) + ","
@@ -132,12 +132,12 @@ def body_abused(data, everything):
     return "" + str(data)
 
 def change_hf_job(data, everything):
-    return(create_hf_link(data['hfid'], everything) + " changed their job at " + 
-            get_site_name(data['site_id'], everything))
+    return(create_hf_link(data['hfid'], everything) + " changed their job " + 
+            create_site_link(data, everything))
 
 def change_hf_state(data, everything):
     return(create_hf_link(data['hfid'], everything) + " started " + data['state'] + 
-            " at " + get_site_name(data['site_id'], everything) + " Coordinates: " + data['coords'])
+            " " +  create_site_link(data, everything))
 
 
 def changed_creature_type(data, everything):
@@ -194,8 +194,8 @@ def hf_revived(data, everything):
 def hf_simple_battle_event(data, everything):
     return(create_hf_link(data['group_1_hfid'], everything) + " " + 
             grammarify_battle_verb(data['subtype']) + " " + 
-            create_hf_link(data['group_2_hfid'], everything) + " at " + 
-            get_site_name(data['site_id'], everything))
+            create_hf_link(data['group_2_hfid'], everything) + " " + 
+            create_site_link(data, everything))
 
 def hf_travel(data, everything):
     return "" + str(data)

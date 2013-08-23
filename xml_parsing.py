@@ -115,7 +115,8 @@ def load_dict(filename):
                     else: #other hf_fig attribute
                     
                         #attributes such as death year for hf_figs still alive
-                        if attribute.text == "-1":
+                        #or some site coords
+                        if attribute.text == "-1" or attribute.text == "-1,-1":
                             continue
                             
                         try:

@@ -68,3 +68,9 @@ def get_hf_race(an_id, everything):
     
 def get_site_name(site_id, everything):
     return capitalize(get_name(site_id, 'sites', everything))
+    
+def get_site_data(site_coords, everything):
+    for site in everything['sites']:
+        if site['coords'] == site_coords:
+            return (site['id'], capitalize(site['name']))
+    return (-1, "")
