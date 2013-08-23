@@ -20,7 +20,7 @@ a_type = The category, e.g. 'historical_figures'
 Given these, will return an element from the database, accounting for the possible offset.
 '''
 def get_element(an_id, a_type, everything):  
-    return everything[a_type][int(an_id) - everything[a_type + '_offset']]
+    return everything[a_type][an_id - everything[a_type + '_offset']]
 
 def get_name(an_id, a_type, everything):
     return capitalize(get_element(an_id, a_type, everything)['name'])
@@ -68,3 +68,9 @@ def get_hf_race(an_id, everything):
     
 def get_site_name(site_id, everything):
     return capitalize(get_name(site_id, 'sites', everything))
+    
+def get_site_data(site_coords, everything):
+    for site in everything['sites']:
+        if site['coords'] == site_coords:
+            return (site['id'], capitalize(site['name']))
+    return (-1, "")

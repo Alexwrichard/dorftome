@@ -58,12 +58,15 @@ def build_hf_page(an_id, everything):
 
     page += "<div class='page-content' id='pagecontent'><p><b class='hf-name-occurence'>"\
                    + hf_name + "</b> was born "
-    
-    birth_year = get_hf(an_id, everything)['birth_year']
-    if int(birth_year) >= 0:
+    try:
+        birth_year = get_hf(an_id, everything)['birth_year']
+    except Exception:
+        birth_year = -1
+        
+    if birth_year >= 0:
          page += "on the " +\
                    time_string(get_hf(an_id, everything)['birth_seconds72']) +\
-                   ", Year " + get_hf(an_id, everything)['birth_year'] + ".</p>"
+                   ", Year " + str(get_hf(an_id, everything)['birth_year']) + ".</p>"
     else:
         page += "at the beginning of the world."
                    
@@ -71,7 +74,7 @@ def build_hf_page(an_id, everything):
                    
     #Eventually, it would be cool to find a way to display this as a tree.
     for relationship_data in get_hf(an_id, everything)['hf_links']:
-        page += "<p>" + capitalize(relationship_data['link_type']) + ' : ' + create_hf_link(relationship_data['hfid'], everything) + "</p>"
+        page += "<p>" + capitalize(relationship_data['type']) + ' : ' + create_hf_link(relationship_data['id'], everything) + "</p>"
                 
     page += "<hr>"
     
@@ -84,7 +87,7 @@ def build_hf_page(an_id, everything):
     
     #For each entity link, we will add that entity to the membership list.
     for entity_data in get_hf(an_id, everything)['entity_links']:
-        page += "<p>" + create_entity_link(entity_data['entity_id'], everything) + "</p>"
+        page += "<p>" + create_entity_link(entity_data['id'], everything) + "</p>"
     page += "</div>"\
              #<script>\
              #    elem = document.getElementById('pagecontent');\
