@@ -11,9 +11,9 @@ def recursive_build_tree(hf_data, children, everything, depth):
             children.append(recursive_build_tree(child_hf, [], everything, depth + 1))
 
     if children == []:
-        return (int(hf_data['id']), None)
+        return (hf_data['id'], None)
 
-    return (int(hf_data['id']), children)
+    return (hf_data['id'], children)
 
 '''
 hf_data is a list of dictionaries, each of which contain data for an hf link.
@@ -65,13 +65,13 @@ stolen from http://stackoverflow.com/questions/15675261/displaying-a-tree-in-asc
 '''
 def display_tree(tree, depth, everything):
     max_depth = 2
-    tree = (str(tree[0]), tree[1])
+    tree = (tree[0], tree[1])
     if(tree[1] is None) or depth >= max_depth: 
         return get_hf_name(tree[0], everything)
     child_strs = [display_tree(child, depth + 1, everything) for child in tree[1]]
     child_widths = [block_width(s) for s in child_strs]
 
-    display_width = max(len(tree[0]), sum(child_widths) + len(child_widths) - 1)
+    display_width = max(tree[0], sum(child_widths) + len(child_widths) - 1)
     
     child_midpoints = []
     child_end = 0

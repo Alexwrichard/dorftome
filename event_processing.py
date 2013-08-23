@@ -69,10 +69,13 @@ Format the year and date to be consistent
 '''
 def date_string(data):
     output = ""
-    if int(data['year']) < 0:
+    if data['year'] < 0:
         output += "At the beginning of the world,"
     else:
-        output += "In " + data['year'] + ", " + time_string(data['seconds72']) + ","
+        output += "In " + str(data['year']) + ","
+        if 'seconds72' in data.keys():
+            output += " " + time_string(data['seconds72']) + ","
+        
     return output
 
 '''
@@ -85,7 +88,6 @@ Will return a string that looks like:
 etc.
 '''
 def time_string(seconds):
-    seconds = int(seconds)
     #There are 403200 seconds in a DF year.
     yearsec = 403200
     months = ['Granite','Slate','Felsite','Hematite','Malachite','Galena','Limestone','Sandstone','Timber','Moonstone','Opal','Obsidian']

@@ -99,6 +99,8 @@ def load_dict(filename):
                         
                     #These tags have tags nested within them, and there are multiple for each historical figure,
                     #Here, we parse them separately and store their information in subdictionaries within lists.
+                    #NB: this changes the attribute names from entity_id and hfid to id, and link_type to link
+                    #       this was done to save space in memory and reduce code complexity
                     if attribute.tag in ['hf_link', 'entity_link']:
                         children = attribute.getchildren()
                         
