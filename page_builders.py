@@ -58,8 +58,11 @@ def build_hf_page(an_id, everything):
 
     page += "<div class='page-content' id='pagecontent'><p><b class='hf-name-occurence'>"\
                    + hf_name + "</b> was born "
-    
-    birth_year = get_hf(an_id, everything)['birth_year']
+    try:
+        birth_year = get_hf(an_id, everything)['birth_year']
+    except Exception:
+        birth_year = -1
+        
     if birth_year >= 0:
          page += "on the " +\
                    time_string(get_hf(an_id, everything)['birth_seconds72']) +\
