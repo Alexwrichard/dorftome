@@ -114,12 +114,15 @@ def suffix_date(date):
 #========>--EVENTS--<==========
 
 def add_hf_entity_link(data, everything):
+    #NOT IMPLEMENTED
     return "" + str(data)
 
 def add_hf_hf_link(data, everything):
+    #TODO: lookup proper relationship
     return(create_hf_link(data['hfid'], everything) + " married/worshipped/imprisoned " + create_hf_link(data['hfid_target'], everything))
 
 def add_hf_site_link(data, everything):
+    #NOT IMPLEMENTED
     return "" + str(data)
 
 def artifact_created(data, everything):
@@ -174,10 +177,14 @@ def field_battle(data, everything):
     return "" + str(data)
 
 def hf_abducted(data, everything):
-    return "" + str(data)
+    return create_hf_link(data['snatcher_hfid'], everything) + " abducted " + create_hf_link(data['target_hfid'], everything)+ " " + create_site_link(data, everything)
 
 def hf_died(data, everything):
-    return "" + str(data)
+    #TODO: get proper cause of death
+    if 'slayer_hfid' not in data.keys():
+        create_hf_link(data['hfid'], everything) + " died of old age " + create_site_link(data, everything)
+        return
+    return create_hf_link(data['slayer_hfid'], everything) + " " + data['cause'] + " " + create_hf_link(data['hfid'], everything) + " " + create_site_link(data, everything)
 
 def hf_new_pet(data, everything):
     return "" + str(data)
@@ -201,7 +208,7 @@ def hf_travel(data, everything):
     return "" + str(data)
 
 def hf_wounded(data, everything):
-    return "" + str(data)
+        return create_hf_link(data['wounder_hfid'], everything) + " wounded " + create_hf_link(data['woundee_hfid'], everything)+ " " + create_site_link(data, everything)
 
 def impersonate_hf(data, everything):
     return "" + str(data)
