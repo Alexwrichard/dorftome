@@ -129,6 +129,11 @@ def load_dict(filename):
                 for attribute in attributes:
                     if attribute.text == "-1":
                         continue
+                    
+                    if element.tag == "historical_event":
+                        #unimplemented events
+                        if attribute.tag == 'type' and attribute.text in ['add hf entity link', 'add hf site link', 'create entity position', 'creature devoured', 'hf new pet', 'item stolen', 'remove hf site link', 'remove hf entity link']:
+                            continue
                             
                     try:
                         element_data[attribute.tag] = int(attribute.text)

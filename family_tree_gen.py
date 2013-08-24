@@ -6,8 +6,8 @@ def recursive_build_tree(hf_data, children, everything, depth):
     max_depth = 2
     hf_links = hf_data['hf_links']
     for hf_link in hf_links:    
-        if (hf_link['link_type'] == 'child') and (depth < max_depth):
-            child_hf = get_element(hf_link['hfid'], 'historical_figures', everything)
+        if (hf_link['type'] == 'child') and (depth < max_depth):
+            child_hf = get_element(hf_link['id'], 'historical_figures', everything)
             children.append(recursive_build_tree(child_hf, [], everything, depth + 1))
 
     if children == []:
@@ -23,9 +23,9 @@ def build_tree_from_hf(hf_data, everything, depth):
     print(hf_data)
     hf_links = hf_data['hf_links']
     for hf_link in hf_links:
-        if hf_link['link_type'] in ['father', 'mother'] and depth < max_depth:
+        if hf_link['type'] in ['father', 'mother'] and depth < max_depth:
             print('stepping back...')
-            build_tree_from_hf(get_hf(hf_link['hfid'], everything), everything, depth + 1)
+            build_tree_from_hf(get_hf(hf_link['id'], everything), everything, depth + 1)
             return
     tree = recursive_build_tree(hf_data, [], everything, 0)
     print(display_tree(tree, 0, everything))
