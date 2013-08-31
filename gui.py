@@ -9,6 +9,8 @@ import page_builders
 from PySide import QtCore, QtGui, QtWebKit
 from random import randint
 
+from gui.SearchBar import SearchBar
+
 class UI(object):
     def setupUi(self, main_window):
         #Dictionary has not been loaded yet.
@@ -30,8 +32,7 @@ class UI(object):
         self.grid_layout = QtGui.QGridLayout()
 
         #Search bar
-        self.search_bar = QtGui.QLineEdit(main_window)
-        self.search_bar.setText("")
+        self.search_bar = SearchBar(main_window)
         self.grid_layout.addWidget(self.search_bar, 0, 0, 1, 1)
 
         #Tabs
@@ -171,6 +172,8 @@ class UI(object):
             new_selected = handle_invalid_file(selected)
             self.everything = load_dict(new_selected)
         self.open_in_current_tab('hf6666')
+        
+        self.search_bar.load_name_list(self.everything)
 
 app = QtGui.QApplication(sys.argv)
 wid = QtGui.QMainWindow()
