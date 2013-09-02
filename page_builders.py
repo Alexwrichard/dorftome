@@ -14,22 +14,7 @@ def load_css():
     CSS_STR = f.read()
     f.close()
 
-'''
-LINK CONVENTIONS:
-sp0000 = splash page
-en#### = entity
-hf#### = historical figure
-'''
-def dispatch_link(page_link, everything):
-    if CSS_STR is None:
-        load_css()
-    code = page_link[:2]
-    dispatcher = {
-                  'en' : build_entity_page,
-                  'hf' : build_hf_page,
-                  'sp' : build_splash_page,
-                 }
-    return dispatcher[code](int(page_link[2:]), everything)
+
 
 '''
 Return a CSS class name for a given event. All events of the same
@@ -40,6 +25,29 @@ turn allow for some dynamic page categorization/organization.
 def css_classify_event(event_id, everything):
     return get_event_type(event_id, everything).replace(" ","-")
 
+def get_header():
+    return  "<html><head>"\
+            "<style>" + CSS_STR + "</style>"\
+            "</head><body>"
+
+def get_footer():
+    return "</body></html>"
+
+#==============SPLASH PAGE=============
+def build_splash_page(dummy, dummy2):
+    string = "<html><head>\
+             <style type='text/css'>" + CSS_STR + "</style>\
+             </head><body>\
+             <h1 class='page-title'> Welcome! </h1>\
+             <hr>\
+             <div class='page-content'>\
+             <p class='plain-text'>To begin browsing, select File > Load XML and locate the correct file.</p>\
+             </div>\
+             </body></html>"
+
+    return string
+    
+#==============HF PAGE=============
 '''
 Given an id, return an HTML string describing that historical figure.
 '''
@@ -49,10 +57,9 @@ def build_hf_page(an_id, everything):
     hf_name = get_hf_name(an_id, everything)
 
     #Beginning HTML for the historical figure page.
-    page = "<html><head>\
-            <style>" + CSS_STR + "</style>\
-            </head><body>\
-            <h1 class='page-title'>" + hf_name + "</h1>\
+    page = get_header()
+            
+    page += "<h1 class='page-title'>" + hf_name + "</h1>\
             <h3 class='page-description'>" + get_hf_gender(an_id, everything) +\
             " " + get_hf_race(an_id, everything) + "</h3><hr>"
 
@@ -95,29 +102,131 @@ def build_hf_page(an_id, everything):
              #</script>\
              #"
 
-    page += "</body></html>"
+    page += get_footer()
 
     return page
 
+#==============ENTITY PAGE=============
 def build_entity_page(an_id, everything):
     ent_name = get_ent_name(an_id, everything)
-    page = "<html><head>\
-            <style type='text/css'>" + CSS_STR + "</style>\
-            </head><body>\
-            <h1 class='page-title'>" + ent_name + "</h1>\
+    page = get_header()
+    
+    page += " <h1 class='page-title'>" + ent_name + "</h1>\
             <hr>\
             </body></html>"
     return page
 
-def build_splash_page(dummy, dummy2):
-    string = "<html><head>\
-             <style type='text/css'>" + CSS_STR + "</style>\
-             </head><body>\
-             <h1 class='page-title'> Welcome! </h1>\
-             <hr>\
-             <div class='page-content'>\
-             <p class='plain-text'>To begin browsing, select File > Load XML and locate the correct file.</p>\
-             </div>\
-             </body></html>"
+#==============REGION PAGE=============
+def build_region_page(an_id, everything):
+    name = get_name(an_id, 'regions', everything)
+    page = get_header()
+    
+    page += " <h1 class='page-title'>" + name + "</h1>\
+            <hr>\
+            </body></html>"
+    return page
 
-    return string
+#==============UNDERGROUND REGION PAGE=============
+def build_underground_region_page(an_id, everything):
+    name = get_name(an_id, 'underground_regions', everything)
+    page = get_header()
+    
+    page += " <h1 class='page-title'>" + name + "</h1>\
+            <hr>\
+            </body></html>"
+    return page    
+
+#==============SITE PAGE=============
+def build_site_page(an_id, everything):
+    name = get_name(an_id, 'sites', everything)
+    page = get_header()
+    
+    page += " <h1 class='page-title'>" + name + "</h1>\
+            <hr>\
+            </body></html>"
+    return page
+
+#==============WORLD CONSTRUCTION PAGE=============
+def build_world_construction_page(an_id, everything):
+    name = get_name(an_id, 'world_constructions', everything)
+    page = get_header()
+    
+    page += " <h1 class='page-title'>" + name + "</h1>\
+            <hr>\
+            </body></html>"
+    return page
+
+#==============ARTIFACT PAGE=============
+def build_artifact_page(an_id, everything):
+    name = get_name(an_id, 'artifacts', everything)
+    page = get_header()
+    
+    page += " <h1 class='page-title'>" + name + "</h1>\
+            <hr>\
+            </body></html>"
+    return page
+ 
+ #==============ENTITY POP PAGE=============
+def build_entity_population_page(an_id, everything):
+    name = get_name(an_id, 'entity_population', everything)
+    page = get_header()
+    
+    page += " <h1 class='page-title'>" + name + "</h1>\
+            <hr>\
+            </body></html>"
+    return page
+
+#==============HISTORICAL EVENT PAGE=============
+def build_historical_event_page(an_id, everything):
+    name = get_name(an_id, 'historical_event', everything)
+    page = get_header()
+    
+    page += " <h1 class='page-title'>" + name + "</h1>\
+            <hr>\
+            </body></html>"
+    return page
+
+#==============HEC PAGE=============
+def build_historical_event_collection_page(an_id, everything):
+    name = get_name(an_id, 'historical_event_collection', everything)
+    page = get_header()
+    
+    page += " <h1 class='page-title'>" + name + "</h1>\
+            <hr>\
+            </body></html>"
+    return page
+    
+#==============HISTORICAL ERA PAGE=============
+def build_historical_era_page(an_id, everything):
+    name = get_name(an_id, 'historical_eras', everything)
+    page = get_header()
+    
+    page += " <h1 class='page-title'>" + name + "</h1>\
+            <hr>\
+            </body></html>"
+    return page
+
+'''
+Link conventions found in link_creator.py
+Some will be removed
+'''
+dispatcher = {  're' : build_region_page, \
+                        'ur' : build_underground_region_page, \
+                        'si' : build_site_page, \
+                        'wc' : build_world_construction_page, \
+                        'ar' : build_artifact_page, \
+                        'hf' : build_hf_page, \
+                        'ep' : build_entity_population_page, \
+                        'en' : build_entity_page, \
+                        'he' : build_historical_event_page, \
+                        'hec' : build_historical_event_collection_page, \
+                        'hera' : build_historical_era_page, \
+                        'sp' : build_splash_page,
+                 }
+           
+def dispatch_link(page_link, everything):
+    if CSS_STR is None:
+        load_css()
+    code = page_link[:2]
+    
+    return dispatcher[code](int(page_link[2:]), everything)

@@ -23,7 +23,25 @@ def get_element(an_id, a_type, everything):
     return everything[a_type][an_id - everything[a_type + '_offset']]
 
 def get_name(an_id, a_type, everything):
-    return capitalize(get_element(an_id, a_type, everything)['name'])
+    try:
+        return capitalize(get_element(an_id, a_type, everything)['name'])
+    except Exception:
+        try:
+            return capitalize(get_element(an_id, a_type, everything)['animated_string'])
+        except Exception:
+            return "NO NAME for " + a_type + " " + str(an_id)
+
+#get an id from the name
+def get_id(name, everything):
+    name = name.lower()
+    for tag in everything.keys():
+        if not tag.endswith("_names"):
+            continue
+        for element_id in everything[tag]:
+            if everything[tag][element_id] == name:
+                return tag.replace("_names", ""), element_id
+    print("Could not find name: " + name)
+    return "", 0000
 
 ####################################
 #----SPECIFIC ATTRIBUTE GETTERS----#

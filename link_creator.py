@@ -2,6 +2,24 @@
 from attribute_getters import *
 
 
+link_mapper = {'':'',\
+                        'region': 're', \
+                        'underground_region': 'ur', \
+                        'site': 'si', \
+                        'world_construction': 'wc', \
+                        'artifact':'ar', \
+                        'historical_figure': 'hf', \
+                        'entity_population': 'ep',\
+                        'entity': 'en',\
+                        'historical_event': 'he',\
+                        'historical_event_collection': 'hec',\
+                        'historical_era':'hera'}
+                        
+def create_page_id(name, everything):
+    element_type, element_id = get_id(name, everything)
+    return link_mapper[element_type] + str(element_id)
+    
+    
 def create_hf_link(hf_id, everything):
     return "<a href='hf" + str(hf_id) + "' class='hf-link' >" +\
         get_hf_name(hf_id, everything) + "</a>"

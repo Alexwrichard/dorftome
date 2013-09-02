@@ -8,7 +8,7 @@ import codecs
 import time
 
 PROFILE_MEMORY = False
-PROFILE_TIME = True
+PROFILE_TIME = False
 
 try:
     from pympler.asizeof import asizeof
@@ -69,6 +69,10 @@ def load_dict(filename):
     lower_level_tags = tag_mapping.keys()
     upper_level_tags = tag_mapping.values()
     
+    #save names for fast lookup
+    for tag in lower_level_tags:
+            everything[tag + '_names'] = {}
+    
     #PROFILING
     if PROFILE_TIME:
         time_array = []
@@ -96,6 +100,14 @@ def load_dict(filename):
                     #not loaded
                     if attribute.tag in ['hf_skill', 'entity_former_position_link']:
                         continue
+                    
+                    #save names in separate array for searching
+                    if attribute.tag in ["name", "animated_string"]:
+                        for attrib in element:
+                            if attrib.tag == "id":
+                                hf_id = attrib.text
+                                break
+                        everything['historical_figure_names'][hf_id] = attribute.text
                         
                     #These tags have tags nested within them, and there are multiple for each historical figure,
                     #Here, we parse them separately and store their information in subdictionaries within lists.
@@ -134,7 +146,15 @@ def load_dict(filename):
                         #unimplemented events
                         if attribute.tag == 'type' and attribute.text in ['add hf entity link', 'add hf site link', 'create entity position', 'creature devoured', 'hf new pet', 'item stolen', 'remove hf site link', 'remove hf entity link']:
                             continue
-                            
+
+                    #save names in separate array for searching
+                    if attribute.tag == "name":
+                        for attrib in element:
+                            if attrib.tag == "id":
+                                element_id = attrib.text
+                                break
+                        everything[element.tag + '_names'][element_id] = attribute.text
+                        
                     try:
                         element_data[attribute.tag] = int(attribute.text)
                     except Exception:

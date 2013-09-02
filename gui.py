@@ -32,7 +32,7 @@ class UI(object):
         self.grid_layout = QtGui.QGridLayout()
 
         #Search bar
-        self.search_bar = SearchBar(main_window)
+        self.search_bar = SearchBar(main_window, self.open_in_new_tab)
         self.grid_layout.addWidget(self.search_bar, 0, 0, 1, 1)
 
         #Tabs
@@ -68,7 +68,7 @@ class UI(object):
         #Right click context menu
         self.action_openinnewtab = QtGui.QAction(main_window)
 
-        self.open_in_new_tab('sp0000')
+        self.open_in_new_tab('sp0000', "Splash")
 
         self.set_titles(main_window)
         self.connect_actions(main_window)
@@ -91,7 +91,7 @@ class UI(object):
         html = page_builders.dispatch_link(page_link, self.everything)
         self.tab_widget.currentWidget().setHtml(html)
 
-    def open_in_new_tab(self, page_link):
+    def open_in_new_tab(self, page_link, page_name):
         try:
             #If it is a URL object, convert to a string first.
             page_link = page_link.toString()
@@ -105,7 +105,7 @@ class UI(object):
         #Set this page's HTML.
         next_tab.setHtml(page_builders.dispatch_link(page_link, self.everything))
         
-        self.tab_widget.addTab(next_tab, str(randint(0, 10000)))
+        self.tab_widget.addTab(next_tab, page_name)
 
         self.tab_widget.setTabsClosable(True)
         self.tab_widget.setCurrentWidget(next_tab)
