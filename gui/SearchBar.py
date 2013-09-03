@@ -1,4 +1,3 @@
-
 from PySide import QtCore, QtGui, QtWebKit
 from attribute_getters import *
 from link_creator import *
@@ -14,7 +13,8 @@ class SearchBar(QtGui.QLineEdit):
         self.worker = SearchBar_Worker()
         
         #create pool with num CPUs minus one
-        self.pool_size = cpu_count() - 1
+        #self.pool_size = cpu_count() - 1
+        self.pool_size = cpu_count()
         self.pool = Pool(self.pool_size)
         
         #set the fcn to open links in the main GUI
