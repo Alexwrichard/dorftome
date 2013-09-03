@@ -5,6 +5,7 @@
 
 import sys
 from xml_parsing import load_dict, handle_invalid_file
+from link_creator import get_name_from_page_id
 import page_builders
 from PySide import QtCore, QtGui, QtWebKit
 from random import randint
@@ -83,15 +84,19 @@ class UI(object):
         self.action_exit.setText("Exit")
         self.action_openinnewtab.setText("Open in new tab")
 
-    def open_in_current_tab(self, page_link):
+    def open_in_current_tab(self, page_link, tab_name = None):
         try:
             page_link = page_link.toString()
         except:
             pass
         html = page_builders.dispatch_link(page_link, self.everything)
         self.tab_widget.currentWidget().setHtml(html)
+        
+        if tab_name == None:
+            tab_name = get_name_from_page_id(page_link, self.everything)
+        self.tab_widget.setTabText(self.tab_widget.currentIndex(), tab_name)
 
-    def open_in_new_tab(self, page_link, page_name):
+    def open_in_new_tab(self, page_link, tab_name):
         try:
             #If it is a URL object, convert to a string first.
             page_link = page_link.toString()
@@ -105,7 +110,7 @@ class UI(object):
         #Set this page's HTML.
         next_tab.setHtml(page_builders.dispatch_link(page_link, self.everything))
         
-        self.tab_widget.addTab(next_tab, page_name)
+        self.tab_widget.addTab(next_tab, tab_name)
 
         self.tab_widget.setTabsClosable(True)
         self.tab_widget.setCurrentWidget(next_tab)
@@ -138,7 +143,7 @@ class UI(object):
             self.right_click_menu.addAction(self.action_openinnewtab)
         self.right_click_menu.popup(global_pos) 
 
-        print(self.hit_url.isEmpty())
+        #print(self.hit_url.isEmpty())
 
     def connect_actions(self, main_window):
         self.action_exit.triggered.connect(QtCore.QCoreApplication.instance().quit)
@@ -148,12 +153,13 @@ class UI(object):
 
     def on_close_tab(self, index):
         if self.tab_widget.count() == 1:
-            self.open_in_current_tab('sp0000')
+            self.open_in_current_tab('sp0000', 'Splash')
         else:
             self.tab_widget.removeTab(index)
 
     def on_click_openinnewtab(self):
-        self.open_in_new_tab(self.hit_url)
+        tab_name = get_name_from_page_id(self.hit_url.toString(), self.everything)
+        self.open_in_new_tab(self.hit_url, tab_name)
 
     def on_open_file_dialog(self):
         self.file_dialog = QtGui.QFileDialog()
@@ -171,6 +177,7 @@ class UI(object):
         if self.everything == None:
             new_selected = handle_invalid_file(selected)
             self.everything = load_dict(new_selected)
+            
         self.open_in_current_tab('hf6666')
         
         self.search_bar.load_name_list(self.everything)

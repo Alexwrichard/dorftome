@@ -19,6 +19,15 @@ def create_page_id(name, everything):
     element_type, element_id = get_id(name, everything)
     return link_mapper[element_type] + str(element_id)
     
+def get_name_from_page_id(page_id, everything):
+    element_type = ''.join(c for c in page_id if not c.isdigit())
+    for k in link_mapper:
+        if link_mapper[k] == element_type:
+            element_type = k + 's'
+            if element_type == 'entitys':
+                element_type = 'entities'
+    element_id = ''.join(c for c in page_id if c.isdigit())
+    return get_name(int(element_id), element_type, everything)
     
 def create_hf_link(hf_id, everything):
     return "<a href='hf" + str(hf_id) + "' class='hf-link' >" +\

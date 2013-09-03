@@ -70,6 +70,7 @@ def load_dict(filename):
     upper_level_tags = tag_mapping.values()
     
     #save names for fast lookup
+    #TODO: not all tags will be needed
     for tag in lower_level_tags:
             everything[tag + '_names'] = {}
     

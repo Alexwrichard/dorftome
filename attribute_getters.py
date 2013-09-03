@@ -26,10 +26,7 @@ def get_name(an_id, a_type, everything):
     try:
         return capitalize(get_element(an_id, a_type, everything)['name'])
     except Exception:
-        try:
             return capitalize(get_element(an_id, a_type, everything)['animated_string'])
-        except Exception:
-            return "NO NAME for " + a_type + " " + str(an_id)
 
 #get an id from the name
 def get_id(name, everything):

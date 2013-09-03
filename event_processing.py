@@ -285,6 +285,7 @@ def grammarify_battle_verb(subtype):
                  "attacked" : "attacked",
                  #I honestly don't know what some of these things are supposed to mean.
                  "2 lost after receiving wounds" : "retreated after receiving wounds from",
+                 "2 lost after giving wounds" : "retreated after inflicting wounds upon",
                  "ambushed" : "ambushed",
                  "happen upon" : "happened upon",
                  "confront" : "confronted",

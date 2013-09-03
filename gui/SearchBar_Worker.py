@@ -5,6 +5,7 @@ class SearchBar_Worker():
         self.name_list = name_list
         
     def search(self, text, num, pool_size):
+        #determine which elements to search
         chunk_size = len(self.name_list)//pool_size
         start = chunk_size * num
         
@@ -13,11 +14,8 @@ class SearchBar_Worker():
         else:
             end = chunk_size * (num + 1)
             
-        #print("Process " + str(num) + " is handling " + str(start) + " to " + str(end) + " out of " + str(len(self.name_list)))
-        
-        names = self.name_list[start:end]
         names_found = []
-        for name in names:
+        for name in self.name_list[start:end]:
             if text in name:
                 names_found.append(name.title())
                 
