@@ -13,8 +13,9 @@ class SearchBar(QtGui.QLineEdit):
         self.autocomplete = QtGui.QListWidget(self)
         self.worker = SearchBar_Worker()
         
-        #create pool with num CPUs minus one
-        self.pool_size = cpu_count() - 1
+        #create pool with num CPUs minus one... this fails for single core processors.
+        #self.pool_size = cpu_count() - 1
+        self.pool_size = cpu_count()
         self.pool = Pool(self.pool_size)
         
         #set the fcn to open links in the main GUI
