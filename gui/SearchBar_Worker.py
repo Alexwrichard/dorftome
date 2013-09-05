@@ -25,7 +25,6 @@ class SearchBar_Worker():
         #the user's entry matches after a space or at the beginning of the word.
         #Within these blocks, the results are sorted automatically.
         names_found.sort(key=lambda info: 0 if (info[0][info[1] - 1] == " " or info[1] == 0) else 1)
-        print(names_found)
         names_found = [i for i in map(lambda x: x[0], names_found)]
 
         return names_found

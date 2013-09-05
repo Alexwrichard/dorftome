@@ -72,7 +72,7 @@ def load_dict(filename):
     #save names for fast lookup
     #TODO: not all tags will be needed
     for tag in lower_level_tags:
-            everything[tag + '_names'] = {}
+        everything[tag + '_names'] = {}
     
     #PROFILING
     if PROFILE_TIME:
@@ -85,82 +85,13 @@ def load_dict(filename):
     
     temp_element_array = []
     for _, element in parser:
-            
         if element.tag in lower_level_tags:
             
-            element_data = {}
-            attributes = element.getchildren()
-            
             if element.tag == 'historical_figure':
-                element_data['events'] = []
-                element_data['hf_links'] = []
-                element_data['entity_links'] = []
-                
-                for attribute in element:
-                    
-                    #not loaded
-                    if attribute.tag in ['hf_skill', 'entity_former_position_link']:
-                        continue
-                    
-                    #save names in separate array for searching
-                    if attribute.tag in ["name", "animated_string"]:
-                        for attrib in element:
-                            if attrib.tag == "id":
-                                hf_id = attrib.text
-                                break
-                        everything['historical_figure_names'][hf_id] = attribute.text
-                        
-                    #These tags have tags nested within them, and there are multiple for each historical figure,
-                    #Here, we parse them separately and store their information in subdictionaries within lists.
-                    #NB: this changes the attribute names from entity_id and hfid to id, and link_type to link
-                    #       this was done to save space in memory and reduce code complexity
-                    if attribute.tag in ['hf_link', 'entity_link']:
-                        children = attribute.getchildren()
-                        
-                        attribute_dict = {}
-                        attribute_dict['type'] = children[0].text
-                        attribute_dict['id'] = int(children[1].text)
-                        
-                        if attribute.tag == 'entity_link' and len(children) > 2:
-                            attribute_dict['strength'] = int(children[2].text)
-                            
-                        element_data[attribute.tag + 's'].append(attribute_dict)
-                    else: #other hf_fig attribute
-                    
-                        #attributes such as death year for hf_figs still alive
-                        #or some site coords
-                        if attribute.text == "-1" or attribute.text == "-1,-1":
-                            continue
-                            
-                        try:
-                            element_data[attribute.tag] = int(attribute.text)
-                        except Exception:
-                            element_data[attribute.tag] = attribute.text
-                    
-            else: #generic element
-                #Add the element attributes to a dictionary representing the element
-                for attribute in attributes:
-                    if attribute.text == "-1":
-                        continue
-                    
-                    if element.tag == "historical_event":
-                        #unimplemented events
-                        if attribute.tag == 'type' and attribute.text in ['add hf entity link', 'add hf site link', 'create entity position', 'creature devoured', 'hf new pet', 'item stolen', 'remove hf site link', 'remove hf entity link']:
-                            continue
-
-                    #save names in separate array for searching
-                    if attribute.tag == "name":
-                        for attrib in element:
-                            if attrib.tag == "id":
-                                element_id = attrib.text
-                                break
-                        everything[element.tag + '_names'][element_id] = attribute.text
-                        
-                    try:
-                        element_data[attribute.tag] = int(attribute.text)
-                    except Exception:
-                        element_data[attribute.tag] = attribute.text
-                        
+                element_data = load_hist_figure_data(element, everything)
+            else: 
+                element_data = load_generic_element_data(element, everything)
+                                       
             temp_element_array.append(element_data)
             close_element(element)
             
@@ -174,7 +105,7 @@ def load_dict(filename):
             try:
                 everything[element.tag + "_offset"] = temp_element_array[0]['id']
             except Exception:
-                pass
+                print("Exception in creation of offset for " + element.tag + "...")
                 
             everything[element.tag] = temp_element_array
             temp_element_array = []
@@ -217,6 +148,94 @@ def load_dict(filename):
             print(memory_array[i][0] + " : " + str(memory_array[i][1]/1024) + " KB || Difference: " + str(difference/1024) + " KB")
             
     return everything
+
+'''
+Returns an element data dictionary with the following structure:
+    { 'events': [12521, 3462, 123, 733, 1324...],
+      'hf_links': [ {'type':'mother', 'id':12415}, {'type':'father', 'id':1235}...],
+      'entity_links' : [ {'type':'something', 'id':12415}, {'type':'somethingelse', 'id':1235}...],
+    }
+
+'''
+def load_hist_figure_data(element, everything):
+    element_data = {}
+    element_data['events'] = []
+    element_data['hf_links'] = []
+    element_data['entity_links'] = []
+    
+    for attribute in element:
+        #not loaded
+        if attribute.tag in ['hf_skill', 'entity_former_position_link']:
+            continue
+        
+        #save names in separate array for searching
+        if attribute.tag in ["name", "animated_string"]:
+            for attrib in element:
+                if attrib.tag == "id":
+                    hf_id = attrib.text
+                    break
+            everything['historical_figure_names'][hf_id] = attribute.text
+            
+        #These tags have tags nested within them, and there are multiple for each historical figure,
+        #Here, we parse them separately and store their information in subdictionaries within lists.
+        if attribute.tag in ['hf_link', 'entity_link']:
+            children = attribute.getchildren()
+            
+            attribute_dict = {}
+            attribute_dict['type'] = children[0].text
+            attribute_dict['id'] = int(children[1].text)
+            
+            if attribute.tag == 'entity_link' and len(children) > 2:
+                attribute_dict['strength'] = int(children[2].text)
+                
+            element_data[attribute.tag + 's'].append(attribute_dict)
+        else: #other hf_fig attribute
+        
+            #attributes such as death year for hf_figs still alive
+            #or some site coords
+            if attribute.text == "-1" or attribute.text == "-1,-1":
+                continue
+                
+            try:
+                element_data[attribute.tag] = int(attribute.text)
+            except (ValueError, TypeError):
+                element_data[attribute.tag] = attribute.text
+
+    return element_data
+     
+def load_generic_element_data(element, everything):
+    element_data = {}
+    attributes = element.getchildren()
+    #generic element
+    #Add the element attributes to a dictionary representing the element
+    for attribute in attributes:
+        if attribute.text == "-1":
+            continue
+        
+        if element.tag == "historical_event":
+            #unimplemented events
+            if attribute.tag == 'type' and attribute.text in ['add hf entity link', 'add hf site link', 'create entity position', 'creature devoured', 'hf new pet', 'item stolen', 'remove hf site link', 'remove hf entity link']:
+                continue
+
+        #save names in separate array for searching
+        #TODO figure out what's happening here
+        if attribute.tag == "name":
+            element_id = None
+            for attrib in element:
+                if attrib.tag == "id":
+                    element_id = attrib.text
+                    break
+            if element_id is not None:
+                everything[element.tag + '_names'][element_id] = attribute.text
+            else:
+                everything[element.tag + '_names']['id'] = attribute.text
+            
+        try:
+            element_data[attribute.tag] = int(attribute.text)
+        except Exception:
+            element_data[attribute.tag] = attribute.text
+
+    return element_data
     
 def close_element(element):
     element.clear()                 # clean up children
