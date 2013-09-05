@@ -65,7 +65,6 @@ class SearchBar(QtGui.QLineEdit):
         self.autocomplete.itemDoubleClicked.connect(self.clickWatcher)
 
     def textWatcher(self, text):
-        
         if len(text) == 0:
             self.autocomplete.hide()
             return

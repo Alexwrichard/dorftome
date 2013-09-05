@@ -16,8 +16,16 @@ class SearchBar_Worker():
             
         names_found = []
         for name in self.name_list[start:end]:
-            if text in name:
-                names_found.append(name.title())
-                
-        return names_found
+            substr_index = name.find(text)
+            if substr_index is not -1:
+                names_found.append((name, substr_index))
         
+        #I might rewrite this... I've been writing some haskell lately and it's
+        #mixing in with my Python. Basically, give precedence when
+        #the user's entry matches after a space or at the beginning of the word.
+        #Within these blocks, the results are sorted automatically.
+        names_found.sort(key=lambda info: 0 if (info[0][info[1] - 1] == " " or info[1] == 0) else 1)
+        print(names_found)
+        names_found = [i for i in map(lambda x: x[0], names_found)]
+
+        return names_found
