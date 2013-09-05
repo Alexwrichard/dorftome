@@ -3,8 +3,6 @@ df-legends-reader
 
 A browser that allows you to view Dwarf Fortress legends exports in an efficient and fluid manner.
 
-The LXML Python library is used for the parsing, as it is quite fast. A small 12 MB file can be parsed in 2 seconds, while a larger 266 MB file takes less than 40 seconds.
-
 ##Current Features
 * Tabbed browsing
 * Hyperlinks between elements
@@ -14,8 +12,8 @@ The LXML Python library is used for the parsing, as it is quite fast. A small 12
 
 ##Future Goals
 
-* Keyboard-only navigation
-* Giving the user a good idea of the *relationships* between historical figures
+* Keyboard-only navigation?
+* Giving the user a good idea of the relationships between historical figures
     + Eventually, a graph (vertices+edges) that shows this visually
 * Visually appealing
    + Clean, elegant light fonts against a dark background
