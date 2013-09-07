@@ -1,10 +1,22 @@
+import time
 
 class SearchBar_Worker():
     
+    def __init__(self, grace_period):
+        self.grace_period = grace_period
+        
     def load_name_list(self, name_list):
         self.name_list = name_list
-        
+    
+    #this is done so that there is a grace period
+    #where the user can change their search query
+    #before it is sent    
+    def wait_for_timeout(self):
+        time.sleep(self.grace_period)
+        return None
+            
     def search(self, text, num, pool_size):
+        
         #determine which elements to search
         chunk_size = len(self.name_list)//pool_size
         start = chunk_size * num

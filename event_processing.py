@@ -56,11 +56,13 @@ def event_type_dispatcher(event_id, everything):
               'site taken over' : site_taken_over,
     }
     event_type = get_event_type(event_id, everything)
+    event_data = get_element(event_id, 'historical_events', everything)
     if event_type in types.keys():
-        event_data = get_element(event_id, 'historical_events', everything)
         #This might look confusing, but it's just a function call to 
         #whatever function matches up in the above dictionary.
         return date_string(event_data) + " " + types[event_type](event_data, everything)
+    else:
+        return "Event type " + event_type + " is not implemented. Data: " + str(event_data)
 
 
 
@@ -182,8 +184,8 @@ def hf_abducted(data, everything):
 def hf_died(data, everything):
     #TODO: get proper cause of death
     if 'slayer_hfid' not in data.keys():
-        create_hf_link(data['hfid'], everything) + " died of old age " + create_site_link(data, everything)
-        return
+        return create_hf_link(data['hfid'], everything) + " died of old age " + create_site_link(data, everything)
+        
     return create_hf_link(data['slayer_hfid'], everything) + " " + data['cause'] + " " + create_hf_link(data['hfid'], everything) + " " + create_site_link(data, everything)
 
 def hf_new_pet(data, everything):
@@ -272,7 +274,7 @@ def site_died(data, everything):
 
 def site_taken_over(data, everything):
     return "" + str(data)
-
+    
 #====>--HELPERS--<==== 
 
 '''
