@@ -119,19 +119,19 @@ def build_entity_page(an_id, everything):
     ent_name = get_ent_name(an_id, everything)
     page = get_header()
     
-    page += " <h1 class='page-title'>" + ent_name + "</h1>\
-            <hr>\
-            </body></html>"
+    page += " <h1 class='page-title'>" + ent_name + "</h1><hr>"
+    page += str(get_ent(an_id, everything))
+    page += "</body></html>"
     return page
 
 #==============REGION PAGE=============
 def build_region_page(an_id, everything):
-    name = get_name(an_id, 'regions', everything)
+    element = get_element(an_id, "regions", everything)
     page = get_header()
     
-    page += " <h1 class='page-title'>" + name + "</h1>\
-            <hr>\
-            </body></html>"
+    page += " <h1 class='page-title'>" + element['name'] + "</h1>"
+    #page += "<h3 class='page-description'>" + capitalize(element['type']) + "</h3><hr>"
+    page += "</body></html>"
     return page
 
 #==============UNDERGROUND REGION PAGE=============
@@ -139,19 +139,20 @@ def build_underground_region_page(an_id, everything):
     name = get_name(an_id, 'underground_regions', everything)
     page = get_header()
     
-    page += " <h1 class='page-title'>" + name + "</h1>\
-            <hr>\
-            </body></html>"
-    return page    
+    page += " <h1 class='page-title'>" + name + "</h1><hr>"
+    page += str(get_element(an_id, "underground_regions", everything))
+    page += "</body></html>"
+    return page  
 
 #==============SITE PAGE=============
 def build_site_page(an_id, everything):
-    name = get_name(an_id, 'sites', everything)
+    element = get_element(an_id, "sites", everything)
     page = get_header()
     
-    page += " <h1 class='page-title'>" + name + "</h1>\
-            <hr>\
-            </body></html>"
+    page += " <h1 class='page-title'>" + capitalize(element['name']) + "</h1>"
+    page += "<h3 class='page-description'>" + capitalize(element['type']) +\
+                " at Coords: " + element['coords'] + "</h3><hr>"
+    page += "</body></html>"
     return page
 
 #==============WORLD CONSTRUCTION PAGE=============
@@ -159,9 +160,9 @@ def build_world_construction_page(an_id, everything):
     name = get_name(an_id, 'world_constructions', everything)
     page = get_header()
     
-    page += " <h1 class='page-title'>" + name + "</h1>\
-            <hr>\
-            </body></html>"
+    page += " <h1 class='page-title'>" + name + "</h1><hr>"
+    page += str(get_element(an_id, "world_constructions", everything))
+    page += "</body></html>"
     return page
 
 #==============ARTIFACT PAGE=============
@@ -169,9 +170,9 @@ def build_artifact_page(an_id, everything):
     name = get_name(an_id, 'artifacts', everything)
     page = get_header()
     
-    page += " <h1 class='page-title'>" + name + "</h1>\
-            <hr>\
-            </body></html>"
+    page += " <h1 class='page-title'>" + name + "</h1><hr>"
+    page += str(get_element(an_id, "artifacts", everything))
+    page += "</body></html>"
     return page
  
  #==============ENTITY POP PAGE=============
@@ -179,9 +180,9 @@ def build_entity_population_page(an_id, everything):
     name = get_name(an_id, 'entity_population', everything)
     page = get_header()
     
-    page += " <h1 class='page-title'>" + name + "</h1>\
-            <hr>\
-            </body></html>"
+    page += " <h1 class='page-title'>" + name + "</h1><hr>"
+    page += str(get_element(an_id, "entity_population", everything))
+    page += "</body></html>"
     return page
 
 #==============HISTORICAL EVENT PAGE=============
@@ -189,9 +190,9 @@ def build_historical_event_page(an_id, everything):
     name = get_name(an_id, 'historical_event', everything)
     page = get_header()
     
-    page += " <h1 class='page-title'>" + name + "</h1>\
-            <hr>\
-            </body></html>"
+    page += " <h1 class='page-title'>" + name + "</h1><hr>"
+    page += str(get_element(an_id, "historical_event", everything))
+    page += "</body></html>"
     return page
 
 #==============HEC PAGE=============
@@ -199,9 +200,9 @@ def build_historical_event_collection_page(an_id, everything):
     name = get_name(an_id, 'historical_event_collection', everything)
     page = get_header()
     
-    page += " <h1 class='page-title'>" + name + "</h1>\
-            <hr>\
-            </body></html>"
+    page += " <h1 class='page-title'>" + name + "</h1><hr>"
+    page += str(get_element(an_id, "historical_event_collection", everything))
+    page += "</body></html>"
     return page
     
 #==============HISTORICAL ERA PAGE=============
@@ -209,9 +210,9 @@ def build_historical_era_page(an_id, everything):
     name = get_name(an_id, 'historical_eras', everything)
     page = get_header()
     
-    page += " <h1 class='page-title'>" + name + "</h1>\
-            <hr>\
-            </body></html>"
+    page += " <h1 class='page-title'>" + name + "</h1><hr>"
+    page += str(get_element(an_id, "historical_eras", everything))
+    page += "</body></html>"
     return page
 
 '''
