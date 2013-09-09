@@ -228,7 +228,7 @@ def load_generic_element_data(element, everything):
         if attribute.tag == "name":
             element_id = None
             for attrib in element:
-                if "id" in attrib.tag:
+                if attrib.tag == "id":
                     element_id = attrib.text
                     break
             if element_id is not None:
