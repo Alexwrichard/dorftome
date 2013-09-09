@@ -12,7 +12,7 @@ PROFILE_TIME = False
 
 try:
     from pympler.asizeof import asizeof
-except Exception as e:
+except ImportError:
     PROFILE_MEMORY = False
     PROFILE_TIME = False
 
@@ -47,8 +47,8 @@ def handle_invalid_file(filename):
     print("Fixed file")
     return tempfile
 
+#TODO document entire loading process here
 def load_dict(filename):
-        
     print("Loading file: " + filename)
     parser = etree.iterparse(filename)
         
@@ -104,8 +104,8 @@ def load_dict(filename):
             #everything[element_type][id - offset]
             try:
                 everything[element.tag + "_offset"] = temp_element_array[0]['id']
-            except Exception:
-                print("Exception in creation of offset for " + element.tag + "...")
+            except KeyError:
+                print("Exception in creation of offset for " + element.tag + ", ignoring...")
                 
             everything[element.tag] = temp_element_array
             temp_element_array = []
@@ -150,12 +150,14 @@ def load_dict(filename):
     return everything
 
 '''
+Makes the following changes to the master dictionary:
+    -Adds a name to the historical_figure_names array
+
 Returns an element data dictionary with the following structure:
     { 'events': [12521, 3462, 123, 733, 1324...],
       'hf_links': [ {'type':'mother', 'id':12415}, {'type':'father', 'id':1235}...],
       'entity_links' : [ {'type':'something', 'id':12415}, {'type':'somethingelse', 'id':1235}...],
     }
-
 '''
 def load_hist_figure_data(element, everything):
     element_data = {}
@@ -203,6 +205,10 @@ def load_hist_figure_data(element, everything):
 
     return element_data
      
+'''
+Makes the following changes to the master dictionary:
+    -Adds a single name to the <element_type>_names array
+'''
 def load_generic_element_data(element, everything):
     element_data = {}
     attributes = element.getchildren()
@@ -222,7 +228,7 @@ def load_generic_element_data(element, everything):
         if attribute.tag == "name":
             element_id = None
             for attrib in element:
-                if attrib.tag == "id":
+                if "id" in attrib.tag:
                     element_id = attrib.text
                     break
             if element_id is not None:
@@ -257,11 +263,3 @@ def parse_historical_events(everything):
         for key in event_data.keys():
             if key in hfid_set:
                 add_event_link_to_hf(event_data[key], event_data['id'], everything)
-                
-    '''
-    for var in range(5500, 6100):
-        print(get_name(var, 'historical_figures', everything) + ' events:')
-        for i in get_element(var, 'historical_figures', everything)['events']:
-            print_event_info(i, everything)
-    '''
-

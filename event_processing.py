@@ -201,16 +201,18 @@ def hf_revived(data, everything):
     return "" + str(data)
 
 def hf_simple_battle_event(data, everything):
-    return(create_hf_link(data['group_1_hfid'], everything) + " " + 
-            grammarify_battle_verb(data['subtype']) + " " + 
-            create_hf_link(data['group_2_hfid'], everything) + " " + 
-            create_site_link(data, everything))
+    return  create_hf_link(data['group_1_hfid'], everything) + " " +\
+            grammarify_battle_verb(data['subtype']) + " " + \
+            create_hf_link(data['group_2_hfid'], everything) + " " + \
+            create_site_link(data, everything)
 
 def hf_travel(data, everything):
     return "" + str(data)
 
 def hf_wounded(data, everything):
-        return create_hf_link(data['wounder_hfid'], everything) + " wounded " + create_hf_link(data['woundee_hfid'], everything)+ " " + create_site_link(data, everything)
+        return create_hf_link(data['wounder_hfid'], everything) + \
+               " wounded " + create_hf_link(data['woundee_hfid'], everything) + \
+               " " + create_site_link(data, everything)
 
 def impersonate_hf(data, everything):
     return "" + str(data)
