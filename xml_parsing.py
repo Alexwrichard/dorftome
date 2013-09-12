@@ -16,6 +16,10 @@ except ImportError:
     PROFILE_MEMORY = False
     PROFILE_TIME = False
 
+'''
+Process an XML file with invalid characters and replace them with 
+question marks.
+'''
 def handle_invalid_file(filename):
     print("Attempting to fix invalid file: " + filename)
     BLOCKSIZE = 1048576 # one megabyte
@@ -47,7 +51,9 @@ def handle_invalid_file(filename):
     print("Fixed file")
     return tempfile
 
-#TODO document entire loading process here
+'''
+Parse the entire XML file 
+'''
 def load_dict(filename):
     print("Loading file: " + filename)
     parser = etree.iterparse(filename)
@@ -55,16 +61,16 @@ def load_dict(filename):
     everything = {}
     
     tag_mapping = {'region': 'regions', \
-                            'underground_region': 'underground_regions', \
-                            'site': 'sites', \
-                            'world_construction': 'world_constructions', \
-                            'artifact':'artifacts', \
-                            'historical_figure': 'historical_figures', \
-                            'entity_population': 'entity_populations',\
-                            'entity': 'entities',\
-                            'historical_event': 'historical_events',\
-                            'historical_event_collection': 'historical_event_collections',\
-                            'historical_era':'historical_eras'}
+                   'underground_region': 'underground_regions', \
+                   'site': 'sites', \
+                   'world_construction': 'world_constructions', \
+                   'artifact':'artifacts', \
+                   'historical_figure': 'historical_figures', \
+                   'entity_population': 'entity_populations',\
+                   'entity': 'entities',\
+                   'historical_event': 'historical_events',\
+                   'historical_event_collection': 'historical_event_collections',\
+                   'historical_era':'historical_eras'}
 
     lower_level_tags = tag_mapping.keys()
     upper_level_tags = tag_mapping.values()
