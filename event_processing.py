@@ -23,10 +23,15 @@ def event_type_dispatcher(event_id, everything):
               'destroyed site' : destroyed_site,
               'diplomat lost' : diplomat_lost,
               'entity created' : entity_created,
+              'entity law' : entity_law,
               'field battle' : field_battle,
               'hf abducted' : hf_abducted,
+              'hf confronted' : hf_confronted,
               'hf died' : hf_died,
+              'hf does interaction' : hf_does_interaction,
+              'hf gains secret goal' : hf_gains_secret_goal,
               'hf new pet' : hf_new_pet,
+              'hf profaned structure' : hf_profaned_structure,
               'hf razed structure' : hf_razed_structure,
               'hf reunion' : hf_reunion,
               'hf revived' : hf_revived,
@@ -175,11 +180,17 @@ def diplomat_lost(data, everything):
 def entity_created(data, everything):
     return "" + str(data)
 
+def entity_law(data, everything):
+    return create_hf_link(data['hist_figure_id'], everything) + " created a " + data['law_add'] + " law for " + create_entity_link(data['entity_id'], everything)
+
 def field_battle(data, everything):
     return "" + str(data)
 
 def hf_abducted(data, everything):
     return create_hf_link(data['snatcher_hfid'], everything) + " abducted " + create_hf_link(data['target_hfid'], everything)+ " " + create_site_link(data, everything)
+
+def hf_confronted(data, everything):
+    return create_hf_link(data['hfid'], everything) + " was confronted with " + data['situation'] + " about " + data['reason'] + " in " + create_site_link(data, everything)
 
 def hf_died(data, everything):
     #TODO: get proper cause of death
@@ -187,6 +198,16 @@ def hf_died(data, everything):
         return create_hf_link(data['hfid'], everything) + " died of old age " + create_site_link(data, everything)
         
     return create_hf_link(data['slayer_hfid'], everything) + " " + data['cause'] + " " + create_hf_link(data['hfid'], everything) + " " + create_site_link(data, everything)
+
+def hf_does_interaction(data, everything):
+    return create_hf_link(data['target_hfid'], everything) + " was " + get_interaction_string(data['interaction']) + " by " + create_hf_link(data['doer_hfid'], everything)
+
+def hf_gains_secret_goal(data, everything):
+    return create_hf_link(data['hfid'], everything) + " achieved " + data['secret_goal']
+    
+def hf_profaned_structure(data, everything):
+     #TODO: link structure data?
+     return create_hf_link(data['hist_fig_id'], everything) + " profaned structure " + str(data['structure_id']) + " in " + create_site_link(data['site_id'], everything)
 
 def hf_new_pet(data, everything):
     return "" + str(data)
@@ -278,6 +299,15 @@ def site_taken_over(data, everything):
     return "" + str(data)
     
 #====>--HELPERS--<==== 
+
+'''
+Returns proper interaction type
+'''
+def get_interaction_string(interaction):
+    if 'CURSE' in interaction:
+        return 'cursed'
+    else:
+        return interaction
 
 '''
 Takes a hf simple battle subtype (e.g. "scuffle") and returns

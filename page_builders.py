@@ -59,6 +59,7 @@ def build_hf_page(an_id, everything):
     #Beginning HTML for the historical figure page.
     page = get_header()
             
+    #TODO: add 'goal' to hist_fig
     page += "<h1 class='page-title'>" + hf_name + "</h1>\
             <h3 class='page-description'>" + get_hf_gender(an_id, everything) +\
             " " + get_hf_race(an_id, everything) + "</h3><hr>"

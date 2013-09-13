@@ -38,7 +38,10 @@ def create_entity_link(entity_id, everything):
         get_ent_name(entity_id, everything) + "</a>"
                 
 def create_site_link(site, everything):
-    if 'site_id' in site.keys():
+    if isinstance(site, int):
+        site_id = site
+        site_name = get_site_name(site_id, everything)
+    elif 'site_id' in site.keys():
         site_id = site['site_id']
         site_name = get_site_name(site_id, everything)
     elif 'coords' in site.keys():
