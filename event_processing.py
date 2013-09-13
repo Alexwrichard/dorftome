@@ -169,6 +169,7 @@ def created_world_construction(data, everything):
     return "" + str(data)
 
 def creature_devoured(data, everything):
+    #NOT IMPLEMENTED
     return "" + str(data)
 
 def destroyed_site(data, everything):

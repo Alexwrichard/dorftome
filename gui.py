@@ -69,7 +69,7 @@ class UI(object):
         #Right click context menu
         self.action_openinnewtab = QtGui.QAction(main_window)
 
-        self.open_in_new_tab('sp0000', "Splash")
+        self.open_in_new_tab('spl0000', "Splash")
 
         self.set_titles(main_window)
         self.connect_actions(main_window)
@@ -153,7 +153,7 @@ class UI(object):
 
     def on_close_tab(self, index):
         if self.tab_widget.count() == 1:
-            self.open_in_current_tab('sp0000', 'Splash')
+            self.open_in_current_tab('spl0000', 'Splash')
         else:
             self.tab_widget.removeTab(index)
 
@@ -178,7 +178,7 @@ class UI(object):
             new_selected = handle_invalid_file(selected)
             self.everything = load_dict(new_selected)
             
-        self.open_in_current_tab('hf6666')
+        self.open_in_current_tab('hif6666')
         
         self.search_bar.load_name_list(self.everything)
 

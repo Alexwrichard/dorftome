@@ -60,6 +60,7 @@ def build_hf_page(an_id, everything):
     page = get_header()
             
     #TODO: add 'goal' to hist_fig
+    #TODO: add spheres for deity
     page += "<h1 class='page-title'>" + hf_name + "</h1>\
             <h3 class='page-description'>" + get_hf_gender(an_id, everything) +\
             " " + get_hf_race(an_id, everything) + "</h3><hr>"
@@ -220,23 +221,23 @@ def build_historical_era_page(an_id, everything):
 Link conventions found in link_creator.py
 Some will be removed
 '''
-dispatcher = {  're' : build_region_page, \
-                        'ur' : build_underground_region_page, \
-                        'si' : build_site_page, \
-                        'wc' : build_world_construction_page, \
-                        'ar' : build_artifact_page, \
-                        'hf' : build_hf_page, \
-                        'ep' : build_entity_population_page, \
-                        'en' : build_entity_page, \
-                        'he' : build_historical_event_page, \
+dispatcher = {  'reg' : build_region_page, \
+                        'urg' : build_underground_region_page, \
+                        'sit' : build_site_page, \
+                        'woc' : build_world_construction_page, \
+                        'art' : build_artifact_page, \
+                        'hif' : build_hf_page, \
+                        'enp' : build_entity_population_page, \
+                        'ent' : build_entity_page, \
+                        'evt' : build_historical_event_page, \
                         'hec' : build_historical_event_collection_page, \
-                        'hera' : build_historical_era_page, \
-                        'sp' : build_splash_page,
+                        'era' : build_historical_era_page, \
+                        'spl' : build_splash_page,
                  }
            
 def dispatch_link(page_link, everything):
     if CSS_STR is None:
         load_css()
-    code = page_link[:2]
+    code = page_link[:3]
     
-    return dispatcher[code](int(page_link[2:]), everything)
+    return dispatcher[code](int(page_link[3:]), everything)

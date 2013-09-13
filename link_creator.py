@@ -3,17 +3,17 @@ from attribute_getters import *
 
 
 link_mapper = {'':'',\
-                        'region': 're', \
-                        'underground_region': 'ur', \
-                        'site': 'si', \
-                        'world_construction': 'wc', \
-                        'artifact':'ar', \
-                        'historical_figure': 'hf', \
-                        'entity_population': 'ep',\
-                        'entity': 'en',\
-                        'historical_event': 'he',\
+                        'region': 'reg', \
+                        'underground_region': 'urg', \
+                        'site': 'sit', \
+                        'world_construction': 'woc', \
+                        'artifact':'art', \
+                        'historical_figure': 'hif', \
+                        'entity_population': 'enp',\
+                        'entity': 'ent',\
+                        'historical_event': 'evt',\
                         'historical_event_collection': 'hec',\
-                        'historical_era':'hera'}
+                        'historical_era':'era'}
                         
 def create_page_id(name, everything):
     element_type, element_id = get_id(name, everything)
@@ -30,11 +30,11 @@ def get_name_from_page_id(page_id, everything):
     return get_name(int(element_id), element_type, everything)
     
 def create_hf_link(hf_id, everything):
-    return "<a href='hf" + str(hf_id) + "' class='hf-link' >" +\
+    return "<a href='hif" + str(hf_id) + "' class='hf-link' >" +\
         get_hf_name(hf_id, everything) + "</a>"
 
 def create_entity_link(entity_id, everything):
-    return "<a href='en" + str(entity_id) + "' class='entity-link' >" +\
+    return "<a href='ent" + str(entity_id) + "' class='entity-link' >" +\
         get_ent_name(entity_id, everything) + "</a>"
                 
 def create_site_link(site, everything):
@@ -51,7 +51,7 @@ def create_site_link(site, everything):
     else:
         return ""
         
-    return "<a href='si" + str(site_id) + "' class='site-link' >" +\
+    return "<a href='sit" + str(site_id) + "' class='site-link' >" +\
         "in " + site_name + "</a>"
         
 
