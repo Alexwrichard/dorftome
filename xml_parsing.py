@@ -85,80 +85,64 @@ class XML_Parser:
         
         #PROFILING
         if self.PROFILE_TIME:
-            time_array = []
-            start_time = time.clock()
+            self.time_array = []
+            self.start_time = time.clock()
         
         if self.PROFILE_MEMORY:
-            memory_array = []
-            memory_array.append(("At beginning : ", asizeof(self.everything)))
+            self.memory_array = []
+            self.memory_array.append(("At beginning : ", asizeof(self.everything)))
         
         self.pool = Pool()
         self.parser_thread = Parser_Thread()
-        
+
         temp_element_array = []
 
         for _, element in parser:
             if element.tag in lower_level_tags:
-                element_data = etree.tostring(element)             
-                temp_element_array.append(element_data)
+                temp_element_array.append(etree.tostring(element))
                 self.close_element(element)
                 
             elif element.tag in upper_level_tags:
+
                 self.pool.apply_async(self.parser_thread.load_element, args=(temp_element_array, element.tag), callback = self.add_elements)
                 
-                #This "offset" is for indexing purposes. So, for example, perhaps the first historical figure in the
-                #'historical_figures' section has id=5764. From there, the indexes progress one-by-one. So we can
-                #set 'historical_figures_offset' to 5764. So then, accessing an element is easy and efficient; we just need to do
-                #everything[element_type][id - offset]
-                #try:
-                    #some upper-level tags such as world_constructions may have no elements
-                #    if len(temp_element_array) > 0:
-                #        everything[element.tag + "_offset"] = temp_element_array[0]['id']
-                #except KeyError:
-                #    print("Exception in creation of offset for " + element.tag + ", ignoring...")
-                    
-                #everything[element.tag] = temp_element_array
                 temp_element_array = []
                 
-                if self.PROFILE_TIME:
-                    time_array.append([element.tag, time.clock() - start_time])
-                    start_time = time.clock() #measure time until next high-level tag is finished
-                    
-                if self.PROFILE_MEMORY:
-                    memory_array.append(("Finishing " + element.tag + ": ", asizeof(self.everything)))
-                    
                 self.close_element(element)
             
         self.pool.close()
         self.pool.join()
         
+        print("Finished parsing")
+        
         if self.PROFILE_TIME:
-            start_time = time.clock()
+            self.time_array.append(['waiting for join', time.clock() - self.start_time])
+            self.start_time = time.clock()
             
         self.parse_historical_events()
         
         if self.PROFILE_TIME:
-            time_array.append(['parsing historical events', time.clock() - start_time])
+            self.time_array.append(['parsing historical events', time.clock() - self.start_time])
         
         if self.PROFILE_MEMORY:
-            memory_array.append(("After parsing historical events: ", asizeof(self.everything)))
+            self.memory_array.append(("After parsing historical events: ", asizeof(self.everything)))
         
         #PRINT PROFILING INFO
         if self.PROFILE_TIME:
             total_time = 0
             print("\n\nTIMING INFO:")
-            for e, t in time_array:
+            for e, t in self.time_array:
                 print("Time taken for " + e + ": " + str(t) + "s")
                 total_time += t
             print("Total time: " + str(total_time) + "s")
             
         if self.PROFILE_MEMORY:
             print("\n\nMEMORY INFO:")
-            for i in range(0, len(memory_array)):
+            for i in range(0, len(self.memory_array)):
                 difference = 0
                 if (i >= 1):
-                    difference = memory_array[i][1] - memory_array[i-1][1]
-                print(memory_array[i][0] + " : " + str(memory_array[i][1]/1024) + " KB || Difference: " + str(difference/1024) + " KB")
+                    difference = self.memory_array[i][1] - self.memory_array[i-1][1]
+                print(self.memory_array[i][0] + " : " + str(self.memory_array[i][1]/1024) + " KB || Difference: " + str(difference/1024) + " KB")
                 
         return self.everything
 
@@ -170,12 +154,17 @@ class XML_Parser:
     def add_elements(self, packed_elements):
         upper_level_tag, offset, element_array, element_names = packed_elements
         print("Adding " + upper_level_tag + " to everything")
-        self.everything_lock.acquire()
         self.everything[upper_level_tag] = element_array
         self.everything[upper_level_tag + "_names"] = element_names
         self.everything[upper_level_tag + "_offset"] = offset
-        self.everything_lock.release()
         
+        if self.PROFILE_TIME:
+            self.time_array.append([upper_level_tag, time.clock() - self.start_time])
+            self.start_time = time.clock() #measure time until next high-level tag is finished
+            
+        if self.PROFILE_MEMORY:
+            self.memory_array.append(("Finishing " + upper_level_tag + ": ", asizeof(self.everything)))
+         
     def add_event_link_to_hf(self, hfid, event_id):
         get_element(hfid, 'historical_figures', self.everything)['events'].append(event_id)
 
