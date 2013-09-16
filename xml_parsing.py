@@ -6,10 +6,11 @@ from event_processing import event_type_dispatcher
 import os
 import codecs
 import time
-import pickle
+import io
 
 from Parser_Thread import Parser_Thread
-from multiprocessing import Pool, Process, Lock
+from multiprocessing import Pool
+import gc
 
 class XML_Parser:
     
@@ -25,7 +26,6 @@ class XML_Parser:
             self.PROFILE_TIME = False
 
         self.everything = {}
-        self.everything_lock = Lock()
     '''
     Process an XML file with invalid characters and replace them with 
     question marks.
@@ -66,7 +66,6 @@ class XML_Parser:
     '''
     def load_dict(self, filename):
         print("Loading file: " + filename)
-        parser = etree.iterparse(filename)
         
         tag_mapping = {'region': 'regions', \
                        'underground_region': 'underground_regions', \
@@ -94,22 +93,29 @@ class XML_Parser:
         
         self.pool = Pool()
         self.parser_thread = Parser_Thread()
+        
+        #temp_element_array = []
 
-        temp_element_array = []
-
-        for _, element in parser:
-            if element.tag in lower_level_tags:
-                temp_element_array.append(etree.tostring(element))
+        for _, element in etree.iterparse(filename):
+            #if element.tag in lower_level_tags:
+            #    temp_element_array.append(etree.tostring(element))
+            #    self.close_element(element)
+                
+            #el
+            if element.tag in upper_level_tags:
+                self.pool.apply_async(self.parser_thread.load_element, args=(etree.tostring(element), element.tag), callback = self.add_elements)
+                
+                #result = self.parser_thread.load_element(etree.tostring(element), element.tag)
+                #self.add_elements(result)
+                
+                #self.parser_thread = Parser_Thread()
+                
                 self.close_element(element)
+                #self.pool.apply_async(self.parser_thread.load_element, args=(temp_element_array, element.tag), callback = self.add_elements)
                 
-            elif element.tag in upper_level_tags:
-
-                self.pool.apply_async(self.parser_thread.load_element, args=(temp_element_array, element.tag), callback = self.add_elements)
+                gc.collect()
+                #temp_element_array = []
                 
-                temp_element_array = []
-                
-                self.close_element(element)
-            
         self.pool.close()
         self.pool.join()
         
@@ -119,7 +125,7 @@ class XML_Parser:
             self.time_array.append(['waiting for join', time.clock() - self.start_time])
             self.start_time = time.clock()
             
-        self.parse_historical_events()
+        #self.parse_historical_events()
         
         if self.PROFILE_TIME:
             self.time_array.append(['parsing historical events', time.clock() - self.start_time])
@@ -132,9 +138,9 @@ class XML_Parser:
             total_time = 0
             print("\n\nTIMING INFO:")
             for e, t in self.time_array:
-                print("Time taken for " + e + ": " + str(t) + "s")
+                print("Time taken for " + e + ": %.2fs" % t)
                 total_time += t
-            print("Total time: " + str(total_time) + "s")
+            print("Total time: %.2fs" % total_time)
             
         if self.PROFILE_MEMORY:
             print("\n\nMEMORY INFO:")
@@ -153,10 +159,15 @@ class XML_Parser:
       
     def add_elements(self, packed_elements):
         upper_level_tag, offset, element_array, element_names = packed_elements
+        packed_elements = None
+        
         print("Adding " + upper_level_tag + " to everything")
-        self.everything[upper_level_tag] = element_array
+        #self.everything[upper_level_tag] = element_array
         self.everything[upper_level_tag + "_names"] = element_names
         self.everything[upper_level_tag + "_offset"] = offset
+        
+        element_array = None
+        gc.collect()
         
         if self.PROFILE_TIME:
             self.time_array.append([upper_level_tag, time.clock() - self.start_time])
@@ -180,3 +191,4 @@ class XML_Parser:
             for key in event_data.keys():
                 if key in hfid_set:
                     self.add_event_link_to_hf(event_data[key], event_data['id'])
+

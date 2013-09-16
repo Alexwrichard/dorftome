@@ -1,8 +1,29 @@
 from lxml import etree
+from multiprocessing import Lock, Array
+import io
+import gc
+import time
+import sys
 
 class Parser_Thread():
         
-    def load_element(self, element_array, high_level_tag):
+    def __init__(self):
+        self.lower_level_tags = ['region', \
+                       'underground_region', \
+                       'site', \
+                       'world_construction', \
+                       'artifact', \
+                       'historical_figure', \
+                       'entity_population',\
+                       'entity',\
+                       'historical_event',\
+                       'historical_event_collection',\
+                       'historical_era']
+                       
+    def load_element(self, element_string, high_level_tag):
+        print("Parsing: " + high_level_tag)
+
+        gc.collect()
         
         #array with all processed elements
         temp_element_array = []
@@ -16,23 +37,20 @@ class Parser_Thread():
         #everything[element_type][id - offset]
         offset = -1
         
-        #print("Parsing " + high_level_tag)
-        for ele_string in element_array:
-            element = etree.fromstring(ele_string)
+        f = io.BytesIO(element_string)
+                
+        gc.collect()
+        
+        for _, element in etree.iterparse(f):
             
+            if not element.tag in self.lower_level_tags:
+                continue
+                
             if element.tag == 'historical_figure':
-                element_data = self.load_hist_figure_data(element)
-                try:
-                    element_name = element_data['name']
-                except KeyError:
-                    element_name = element_data['animated_string']
-            else: 
-                element_data = self.load_generic_element_data(element)
-                try:
-                    element_name = element_data['name']
-                except KeyError:
-                    element_name = ""
-
+                element_data, element_name = self.load_hist_figure_data(element)
+            else:
+                element_data, element_name = self.load_generic_element_data(element)
+                
             try:
                 element_id = element_data['id']
             except KeyError:
@@ -40,15 +58,21 @@ class Parser_Thread():
                 
             #if we haven't stored an offset yet, store the first id we see
             if offset == -1:
-                    offset = element_id
+                offset = element_id
                     
             temp_element_array.append(element_data)
             
-            if not element_name == "":
-                names_dict[element_id] = element_name
-                
-            element.clear()
-                
+            #store the element's name
+            #if not element_name == "":
+            #    names_dict[element_id] = element_name
+        
+        f.close()
+        f = None
+        element_string = None
+        gc.collect()
+        
+        #print(gc.get_objects())
+        
         #callback to the main thread to be added to main everything array
         return (high_level_tag, offset, temp_element_array, names_dict)
 
@@ -91,13 +115,32 @@ class Parser_Thread():
                 if attribute.text == "-1" or attribute.text == "-1,-1":
                     continue
                     
+                #don't save invalid birth years
+                if attribute.tag == "birth_year" and int(attribute.text) < 0:
+                    continue
+                    
+                tag = sys.intern(attribute.tag)
+                if attribute.text == None:
+                    element_data[tag] = None
+                    continue
+                    
                 #try to store attribute values as int, as they are smaller in memory
-                try:
-                    element_data[attribute.tag] = int(attribute.text)
-                except (ValueError, TypeError):
-                    element_data[attribute.tag] = attribute.text
 
-        return element_data
+                try:
+                    element_data[tag] = int(attribute.text)
+                except (ValueError, TypeError):
+                    element_data[tag] = sys.intern(attribute.text)
+                    
+            self.close_element(attribute)
+        self.close_element(element)
+            
+        #get the figure's name
+        try:
+            element_name = element_data['name']
+        except KeyError:
+            element_name = element_data['animated_string']
+                    
+        return element_data, element_name
          
     '''
     Returns a processed generic element
@@ -116,13 +159,28 @@ class Parser_Thread():
                 #unimplemented events
                 if attribute.tag == 'type' and attribute.text in ['add hf entity link', 'add hf site link', 'create entity position', 'creature devoured', 'hf new pet', 'item stolen', 'remove hf site link', 'remove hf entity link']:
                     continue
+                
+                #unused, do not store
+                if attribute.tag == "feature_layer_id":
+                    continue
 
             #try to store attribute values as int, as they are smaller in memory
             try:
-                element_data[attribute.tag] = int(attribute.text)
+                element_data[sys.intern(attribute.tag)] = int(attribute.text)
             except Exception:
-                element_data[attribute.tag] = attribute.text
+                element_data[sys.intern(attribute.tag)] = sys.intern(attribute.text)
 
-        return element_data
+            self.close_element(attribute)
+        self.close_element(element)
+            
+        try:
+            element_name = element_data['name']
+        except KeyError:
+            element_name = ""
+                    
+        return element_data, element_name
         
-    
+    def close_element(self, element):
+        element.clear()                 # clean up children
+        while element.getprevious() is not None:
+            del element.getparent()[0]  # clean up preceding siblings

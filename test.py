@@ -18,6 +18,6 @@ def main():
         new_filename = parser.handle_invalid_file(xml_file)
         everything = parser.load_dict(new_filename)
             
-    #build_tree_from_hf(get_element(5461, 'historical_figures', everything), everything, 0)
+    build_tree_from_hf(get_element(5461, 'historical_figures', everything), everything, 0)
             
 main()
