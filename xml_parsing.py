@@ -6,11 +6,9 @@ from event_processing import event_type_dispatcher
 import os
 import codecs
 import time
-import io
 
 from Parser_Thread import Parser_Thread
 from multiprocessing import Pool
-import gc
 
 class XML_Parser:
     
@@ -91,31 +89,24 @@ class XML_Parser:
             self.memory_array = []
             self.memory_array.append(("At beginning : ", asizeof(self.everything)))
         
+        #set up thread pool
         self.pool = Pool()
-        self.parser_thread = Parser_Thread()
         
-        #temp_element_array = []
+        #create parser object that handles the element
+        self.parser_thread = Parser_Thread()
 
         for _, element in etree.iterparse(filename):
-            #if element.tag in lower_level_tags:
-            #    temp_element_array.append(etree.tostring(element))
-            #    self.close_element(element)
-                
-            #el
+
             if element.tag in upper_level_tags:
+                
+                #call parser to process the element
+                #the element must be sent as a string
+                #will callback to add elements to actually add to everything dict
                 self.pool.apply_async(self.parser_thread.load_element, args=(etree.tostring(element), element.tag), callback = self.add_elements)
                 
-                #result = self.parser_thread.load_element(etree.tostring(element), element.tag)
-                #self.add_elements(result)
-                
-                #self.parser_thread = Parser_Thread()
-                
                 self.close_element(element)
-                #self.pool.apply_async(self.parser_thread.load_element, args=(temp_element_array, element.tag), callback = self.add_elements)
                 
-                gc.collect()
-                #temp_element_array = []
-                
+        #wait for all threads to stop
         self.pool.close()
         self.pool.join()
         
@@ -125,7 +116,7 @@ class XML_Parser:
             self.time_array.append(['waiting for join', time.clock() - self.start_time])
             self.start_time = time.clock()
             
-        #self.parse_historical_events()
+        self.parse_historical_events()
         
         if self.PROFILE_TIME:
             self.time_array.append(['parsing historical events', time.clock() - self.start_time])
@@ -157,17 +148,19 @@ class XML_Parser:
         while element.getprevious() is not None:
             del element.getparent()[0]  # clean up preceding siblings
       
+      
+    #add the elements to the everything dict
     def add_elements(self, packed_elements):
+        
+        #only one object can be sent in the callback
+        #unpack this object
         upper_level_tag, offset, element_array, element_names = packed_elements
         packed_elements = None
         
-        print("Adding " + upper_level_tag + " to everything")
-        #self.everything[upper_level_tag] = element_array
+        print("Adding: " + upper_level_tag + " to everything")
+        self.everything[upper_level_tag] = element_array
         self.everything[upper_level_tag + "_names"] = element_names
         self.everything[upper_level_tag + "_offset"] = offset
-        
-        element_array = None
-        gc.collect()
         
         if self.PROFILE_TIME:
             self.time_array.append([upper_level_tag, time.clock() - self.start_time])
