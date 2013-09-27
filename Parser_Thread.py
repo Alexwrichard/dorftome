@@ -7,20 +7,73 @@ import sys
 class Parser_Thread():
         
     def __init__(self):
-        self.lower_level_tags = ['region', \
-                       'underground_region', \
-                       'site', \
-                       'world_construction', \
-                       'artifact', \
-                       'historical_figure', \
-                       'entity_population',\
-                       'entity',\
-                       'historical_event',\
-                       'historical_event_collection',\
-                       'historical_era']
+        self.tag_mapping = {'region': 'regions', \
+                       'underground_region': 'underground_regions', \
+                       'site': 'sites', \
+                       'world_construction': 'world_constructions', \
+                       'artifact':'artifacts', \
+                       'historical_figure': 'historical_figures', \
+                       'entity_population': 'entity_populations',\
+                       'entity': 'entities',\
+                       'historical_event': 'historical_events',\
+                       'historical_event_collection': 'historical_event_collections',\
+                       'historical_era':'historical_eras'}
                        
+    #fallback for when no parsing threads are used
+    def parse_file(self, filename):
+        
+        #the dict for everything
+        everything = {}
+        
+        element_array = []
+        names_dict = {}
+        offset = -1
+        
+        #the tags to search for
+        lower_level_tags = self.tag_mapping.keys()
+        upper_level_tags = self.tag_mapping.values()
+        
+        #parse the file
+        for _, element in etree.iterparse(filename):
+            
+                #look for the lower-level elements
+                if element.tag in lower_level_tags:
+                    
+                    if element.tag == 'historical_figure':
+                        element_data, element_name, element_id = self.load_hist_figure_data(element)
+                    else:
+                        element_data, element_name, element_id = self.load_generic_element_data(element)
+                    
+                    #if we haven't stored an offset yet, store the first id we see
+                    if offset == -1:
+                        offset = element_id
+                            
+                    #store element
+                    element_array.append(element_data)
+                    
+                    #store the element's name
+                    if not element_name == "":
+                        names_dict[element_id] = element_name
+                    
+                elif element.tag in upper_level_tags:
+                    
+                    #store the elements in the everything dict
+                    everything[element.tag] = element_array
+                    everything[element.tag + "_names"] = names_dict
+                    everything[element.tag + "_offset"] = offset
+                    
+                    #close the element
+                    self.close_element(element)
+                    
+                    #reset for the next upper level tag
+                    element_array = []
+                    name_dict = {}
+                    offset = -1
+                    
+        return everything
+        
+    #parse this high-level element
     def load_element(self, element_string, high_level_tag):
-        print("Parsing: " + high_level_tag)
         
         #array with all processed elements
         temp_element_array = []
@@ -38,23 +91,21 @@ class Parser_Thread():
         #for the iterparse
         f = io.BytesIO(element_string)
 
+        #find the lower level tags to look for
+        lower_level_tags = self.tag_mapping.keys()
+        
         #iterparse through the element
         for _, element in etree.iterparse(f):
             
-            if not element.tag in self.lower_level_tags:
+            #ignore tags within the lower level tag
+            if not element.tag in lower_level_tags:
                 continue
                 
             if element.tag == 'historical_figure':
-                element_data, element_name = self.load_hist_figure_data(element)
+                element_data, element_name, element_id = self.load_hist_figure_data(element)
             else:
-                element_data, element_name = self.load_generic_element_data(element)
-                
-            #find the element's id
-            try:
-                element_id = int(element_data['id'])
-            except KeyError:
-                element_id = 0
-                
+                element_data, element_name, element_id = self.load_generic_element_data(element)
+
             #if we haven't stored an offset yet, store the first id we see
             if offset == -1:
                 offset = element_id
@@ -125,7 +176,6 @@ class Parser_Thread():
                     continue
                     
                 #try to store attribute values as int, as they are smaller in memory
-
                 try:
                     element_data[tag] = int(attribute.text)
                 except (ValueError, TypeError):
@@ -140,7 +190,13 @@ class Parser_Thread():
         except KeyError:
             element_name = element_data['animated_string']
                     
-        return element_data, element_name
+        #find the element's id
+        try:
+            element_id = int(element_data['id'])
+        except KeyError:
+            element_id = 0
+                
+        return element_data, element_name, element_id
          
     '''
     Returns a processed generic element
@@ -188,8 +244,14 @@ class Parser_Thread():
             element_name = element_data['name']
         except KeyError:
             element_name = ""
+            
+        #find the element's id
+        try:
+            element_id = int(element_data['id'])
+        except KeyError:
+            element_id = 0
                     
-        return element_data, element_name
+        return element_data, element_name, element_id
         
     def close_element(self, element):
         element.clear()                 # clean up children

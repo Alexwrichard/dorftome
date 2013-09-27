@@ -6,6 +6,7 @@ from event_processing import event_type_dispatcher
 import os
 import codecs
 import time
+import configparser
 
 from Parser_Thread import Parser_Thread
 from multiprocessing import Pool
@@ -14,8 +15,12 @@ class XML_Parser:
     
     def __init__(self):
         
-        self.PROFILE_MEMORY = False
-        self.PROFILE_TIME = True
+        cfg = configparser.ConfigParser()
+        cfg.read('legend_reader.cfg')
+        self.num_parsing_threads = int(cfg.get('default',"num_parsing_threads"))
+        
+        self.PROFILE_TIME = (cfg.get('profiling',"print_parsing_timing") == "True")
+        self.PROFILE_MEMORY = (cfg.get('profiling',"print_parsing_memory") == "True")
 
         try:
             from pympler.asizeof import asizeof
@@ -24,6 +29,7 @@ class XML_Parser:
             self.PROFILE_TIME = False
 
         self.everything = {}
+        
     '''
     Process an XML file with invalid characters and replace them with 
     question marks.
@@ -83,43 +89,57 @@ class XML_Parser:
         #PROFILING
         if self.PROFILE_TIME:
             self.time_array = []
-            self.start_time = time.clock()
+            self.start_time = time.time()
         
         if self.PROFILE_MEMORY:
             self.memory_array = []
             self.memory_array.append(("At beginning : ", asizeof(self.everything)))
         
         #set up thread pool
-        self.pool = Pool()
+        if self.num_parsing_threads < 0:
+            #create num threads = cpu count
+            self.pool = Pool()
+        elif self.num_parsing_threads > 0:
+            #create required size pool
+            self.pool = Pool(self.num_parsing_threads)
+        else:
+            self.pool = None
         
         #create parser object that handles the element
         self.parser_thread = Parser_Thread()
+        
+        #using multi-threading to parse file
+        if self.pool:
+            for _, element in etree.iterparse(filename):
 
-        for _, element in etree.iterparse(filename):
-
-            if element.tag in upper_level_tags:
-                
-                #call parser to process the element
-                #the element must be sent as a string
-                #will callback to add elements to actually add to everything dict
-                self.pool.apply_async(self.parser_thread.load_element, args=(etree.tostring(element), element.tag), callback = self.add_elements)
-                
-                self.close_element(element)
-                
-        #wait for all threads to stop
-        self.pool.close()
-        self.pool.join()
+                if element.tag in upper_level_tags:
+                    
+                    #call parser to process the element
+                    #the element must be sent as a string
+                    #will callback to add elements to actually add to everything dict
+                    self.pool.apply_async(self.parser_thread.load_element, args=(etree.tostring(element), element.tag), callback = self.add_elements)
+                    
+                    self.close_element(element)
+                    
+            #wait for all threads to stop
+            self.pool.close()
+            self.pool.join()
+            
+        #using only main thread to parse file
+        else:
+            #use parser object to parse file
+            self.everything = self.parser_thread.parse_file(filename)
         
         print("Finished parsing")
         
         if self.PROFILE_TIME:
-            self.time_array.append(['waiting for join', time.clock() - self.start_time])
-            self.start_time = time.clock()
+            self.time_array.append(['waiting to finish parsing', time.time() - self.start_time])
+            self.start_time = time.time()
             
         self.parse_historical_events()
         
         if self.PROFILE_TIME:
-            self.time_array.append(['parsing historical events', time.clock() - self.start_time])
+            self.time_array.append(['parsing historical events', time.time() - self.start_time])
         
         if self.PROFILE_MEMORY:
             self.memory_array.append(("After parsing historical events: ", asizeof(self.everything)))
@@ -157,14 +177,13 @@ class XML_Parser:
         upper_level_tag, offset, element_array, element_names = packed_elements
         packed_elements = None
         
-        print("Adding: " + upper_level_tag + " to everything")
         self.everything[upper_level_tag] = element_array
         self.everything[upper_level_tag + "_names"] = element_names
         self.everything[upper_level_tag + "_offset"] = offset
         
         if self.PROFILE_TIME:
-            self.time_array.append([upper_level_tag, time.clock() - self.start_time])
-            self.start_time = time.clock() #measure time until next high-level tag is finished
+            self.time_array.append([upper_level_tag, time.time() - self.start_time])
+            self.start_time = time.time() #measure time until next high-level tag is finished
             
         if self.PROFILE_MEMORY:
             self.memory_array.append(("Finishing " + upper_level_tag + ": ", asizeof(self.everything)))
