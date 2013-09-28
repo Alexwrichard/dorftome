@@ -160,7 +160,7 @@ def create_entity_position(data, everything):
     return "" + str(data)
 
 def created_site(data, everything):
-    return "" + str(data)
+    return create_entity_link(data['site_civ_id'], everything) + " of the " + create_entity_link(data['civ_id'], everything) + " created " + create_site_link(data, everything)
 
 def created_structure(data, everything):
     return "" + str(data)
