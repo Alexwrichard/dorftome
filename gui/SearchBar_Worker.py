@@ -39,4 +39,5 @@ class SearchBar_Worker():
         names_found.sort(key=lambda info: 0 if (info[0][info[1] - 1] == " " or info[1] == 0) else 1)
         names_found = [i for i in map(lambda x: x[0], names_found)]
 
+        #TODO: These should be returned capitalized
         return names_found

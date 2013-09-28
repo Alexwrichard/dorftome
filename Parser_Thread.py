@@ -67,7 +67,7 @@ class Parser_Thread():
                     
                     #reset for the next upper level tag
                     element_array = []
-                    name_dict = {}
+                    names_dict = {}
                     offset = -1
                     
         return everything
