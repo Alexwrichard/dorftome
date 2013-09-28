@@ -6,19 +6,17 @@
 import sys
 from link_creator import get_name_from_page_id
 import page_builders
+import xml_parsing
 from PySide import QtCore, QtGui, QtWebKit
 from random import randint
 
 from gui.SearchBar import SearchBar
-from xml_parsing import XML_Parser
 
 class UI(object):
     def setupUi(self, main_window):
         #Dictionary has not been loaded yet.
         self.everything = None
 
-        self.parser = XML_Parser()
-        
         #Main window creation
         main_window.resize(800, 600)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Fixed)
@@ -172,13 +170,13 @@ class UI(object):
         selected = self.file_dialog.selectedFiles()[0]
         
         try:
-            self.everything = self.parser.load_dict(selected)
+            self.everything = xml_parsing.load_dict(selected)
         except Exception as e:
             self.everything = None
             
         if self.everything == None:
-            new_selected = self.parser.handle_invalid_file(selected)
-            self.everything = self.parser.load_dict(new_selected)
+            new_selected = xml_parsing.handle_invalid_file(selected)
+            self.everything = xml_parsing.load_dict(new_selected)
             
         self.open_in_current_tab('hif6666')
         
