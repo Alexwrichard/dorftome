@@ -48,10 +48,7 @@ def get_id(name, everything):
 
 def get_event(event_id, everything):
     return everything['historical_events'][int(event_id) - everything['historical_events_offset']]
-    
-def get_event_type(an_id, everything):
-    return everything['historical_events'][int(an_id) - everything['historical_events_offset']]['type']
-
+        
 def get_ent(an_id, everything):
     return get_element(an_id, 'entities', everything)
 
@@ -60,9 +57,6 @@ def get_ent_name(an_id, everything):
 
 def get_hf(an_id, everything):
     return get_element(an_id, 'historical_figures', everything)
-
-def get_hf_events(an_id, everything):
-    return get_element(an_id,  'historical_figures', everything)['events']
 
 def get_hf_gender(an_id, everything):
     try:

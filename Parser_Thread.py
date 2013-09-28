@@ -43,11 +43,11 @@ class Parser_Thread():
                         element_data, element_name, element_id = self.load_hist_figure_data(element)
                     else:
                         element_data, element_name, element_id = self.load_generic_element_data(element)
-                    
+                
                     #if we haven't stored an offset yet, store the first id we see
                     if offset == -1:
                         offset = element_id
-                            
+                        
                     #store element
                     element_array.append(element_data)
                     
@@ -204,6 +204,11 @@ class Parser_Thread():
     def load_generic_element_data(self, element):
         element_data = {}
         
+        #some elements have events
+        #TODO: narrow this down
+        if not element.tag == 'historical_event':
+            element_data['events'] = []
+        
         #Add the element attributes to a dictionary representing the generic element
         for attribute in element.getchildren():
             
@@ -216,10 +221,19 @@ class Parser_Thread():
                 #unimplemented events
                 if attribute.tag == 'type' and attribute.text in ['add hf entity link', 'add hf site link', 'create entity position', 'creature devoured', 'hf new pet', 'item stolen', 'remove hf site link', 'remove hf entity link']:
                     self.close_element(attribute)
-                    continue
+                    element_data = None
+                    self.close_element(attribute)
+                    self.close_element(element)
+                    break
                 
                 #unused, do not store
                 if attribute.tag == "feature_layer_id":
+                    self.close_element(attribute)
+                    continue
+                    
+                #empty coords are useless
+                #TODO: maybe subregion ids are not?
+                elif attribute.tag == "coords" and attribute.text == "-1,-1":
                     self.close_element(attribute)
                     continue
 
@@ -227,7 +241,10 @@ class Parser_Thread():
             tag = sys.intern(attribute.tag)
             
             if attribute.text == None:
+                
+                #this is needed for flags like deity
                 element_data[tag] = None
+                
                 self.close_element(attribute)
                 continue
                 
@@ -242,13 +259,13 @@ class Parser_Thread():
             
         try:
             element_name = element_data['name']
-        except KeyError:
+        except (KeyError, TypeError):
             element_name = ""
             
         #find the element's id
         try:
             element_id = int(element_data['id'])
-        except KeyError:
+        except (KeyError, TypeError):
             element_id = 0
                     
         return element_data, element_name, element_id

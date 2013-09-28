@@ -11,6 +11,8 @@ import configparser
 from Parser_Thread import Parser_Thread
 from multiprocessing import Pool
 
+from connect_elements import *
+
 class XML_Parser:
     
     def __init__(self):
@@ -136,7 +138,7 @@ class XML_Parser:
             self.time_array.append(['waiting to finish parsing', time.time() - self.start_time])
             self.start_time = time.time()
             
-        self.parse_historical_events()
+        parse_historical_events(self.everything)
         
         if self.PROFILE_TIME:
             self.time_array.append(['parsing historical events', time.time() - self.start_time])
@@ -188,19 +190,4 @@ class XML_Parser:
         if self.PROFILE_MEMORY:
             self.memory_array.append(("Finishing " + upper_level_tag + ": ", asizeof(self.everything)))
          
-    def add_event_link_to_hf(self, hfid, event_id):
-        get_element(hfid, 'historical_figures', self.everything)['events'].append(event_id)
-
-    def parse_historical_events(self):
-        if not 'historical_events' in self.everything:
-            return
-        
-        hfid_set = ['hfid', 'slayer_hfid', 'group_hfid', 'group_1_hfid', 'group_2_hfid', 'woundee_hfid',
-                               'wounder_hfid', 'trickster_hfid', 'cover_hfid', 'hist_fig_id', 'target_hfid', 
-                               'snatcher_hfid', 'changee_hfid', 'changer_hfid', 'hist_figure_id', 'hfid_target']
-                               
-        for event_data in self.everything['historical_events']:
-            for key in event_data.keys():
-                if key in hfid_set:
-                    self.add_event_link_to_hf(event_data[key], event_data['id'])
-
+    

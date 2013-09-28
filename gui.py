@@ -177,7 +177,7 @@ class UI(object):
             self.everything = None
             
         if self.everything == None:
-            new_selected = handle_invalid_file(selected)
+            new_selected = self.parser.handle_invalid_file(selected)
             self.everything = self.parser.load_dict(new_selected)
             
         self.open_in_current_tab('hif6666')

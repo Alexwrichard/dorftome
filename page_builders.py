@@ -32,6 +32,17 @@ def get_header():
 
 def get_footer():
     return "</body></html>"
+    
+#==============PAGE ELEMENTS==========
+def print_events(element_id, element_type, everything):
+    output = ""
+   
+    events = get_element(element_id, element_type, everything)['events']
+
+    for event_id in events:
+        #event_class = css_classify_event
+        output += "<p>" + event_type_dispatcher(event_id, everything) + "</p>"
+    return output
 
 #==============SPLASH PAGE=============
 def build_splash_page(dummy, dummy2):
@@ -95,9 +106,7 @@ def build_hf_page(an_id, everything):
                 
     page += "<hr>"
     
-    for event_id in get_hf_events(an_id, everything):
-        event_class = css_classify_event
-        page += "<p>" + event_type_dispatcher(event_id, everything) + "</p>"
+    page += print_events(an_id, "historical_figures", everything)
                    
     page += "</div>"
     page += "<div class='memberships'>"
@@ -123,6 +132,7 @@ def build_entity_page(an_id, everything):
     
     page += " <h1 class='page-title'>" + ent_name + "</h1><hr>"
     page += str(get_ent(an_id, everything))
+    page += print_events(an_id, "entities", everything)
     page += "</body></html>"
     return page
 
@@ -133,6 +143,7 @@ def build_region_page(an_id, everything):
     
     page += " <h1 class='page-title'>" + element['name'] + "</h1>"
     #page += "<h3 class='page-description'>" + capitalize(element['type']) + "</h3><hr>"
+    page += print_events(an_id, "regions", everything)
     page += "</body></html>"
     return page
 
@@ -143,6 +154,7 @@ def build_underground_region_page(an_id, everything):
     
     page += " <h1 class='page-title'>" + name + "</h1><hr>"
     page += str(get_element(an_id, "underground_regions", everything))
+    page += print_events(an_id, "underground_regions", everything)
     page += "</body></html>"
     return page  
 
@@ -154,6 +166,9 @@ def build_site_page(an_id, everything):
     page += " <h1 class='page-title'>" + capitalize(element['name']) + "</h1>"
     page += "<h3 class='page-description'>" + capitalize(element['type']) +\
                 " at Coords: " + element['coords'] + "</h3><hr>"
+                
+    page += print_events(an_id, "sites", everything)
+        
     page += "</body></html>"
     return page
 
@@ -164,6 +179,7 @@ def build_world_construction_page(an_id, everything):
     
     page += " <h1 class='page-title'>" + name + "</h1><hr>"
     page += str(get_element(an_id, "world_constructions", everything))
+    page += print_events(an_id, "world_constructions", everything)
     page += "</body></html>"
     return page
 
@@ -174,6 +190,7 @@ def build_artifact_page(an_id, everything):
     
     page += " <h1 class='page-title'>" + name + "</h1><hr>"
     page += str(get_element(an_id, "artifacts", everything))
+    page += print_events(an_id, "artifacts", everything)
     page += "</body></html>"
     return page
  
@@ -184,6 +201,7 @@ def build_entity_population_page(an_id, everything):
     
     page += " <h1 class='page-title'>" + name + "</h1><hr>"
     page += str(get_element(an_id, "entity_population", everything))
+    page += print_events(an_id, "entity_populations", everything)
     page += "</body></html>"
     return page
 
@@ -194,6 +212,7 @@ def build_historical_event_page(an_id, everything):
     
     page += " <h1 class='page-title'>" + name + "</h1><hr>"
     page += str(get_element(an_id, "historical_event", everything))
+    page += print_events(an_id, "historical_events", everything)
     page += "</body></html>"
     return page
 
@@ -204,6 +223,7 @@ def build_historical_event_collection_page(an_id, everything):
     
     page += " <h1 class='page-title'>" + name + "</h1><hr>"
     page += str(get_element(an_id, "historical_event_collection", everything))
+    page += print_events(an_id, "historical_event_collections", everything)
     page += "</body></html>"
     return page
     
@@ -214,6 +234,7 @@ def build_historical_era_page(an_id, everything):
     
     page += " <h1 class='page-title'>" + name + "</h1><hr>"
     page += str(get_element(an_id, "historical_eras", everything))
+    page += print_events(an_id, "historical_eras", everything)
     page += "</body></html>"
     return page
 

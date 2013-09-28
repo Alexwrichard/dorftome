@@ -60,16 +60,16 @@ def event_type_dispatcher(event_id, everything):
               'site died' : site_died,
               'site taken over' : site_taken_over,
     }
-    event_type = get_event_type(event_id, everything)
-    event_data = get_element(event_id, 'historical_events', everything)
+    
+    event_data = get_event(event_id, everything)
+    event_type = event_data['type']
+    
     if event_type in types.keys():
         #This might look confusing, but it's just a function call to 
         #whatever function matches up in the above dictionary.
         return date_string(event_data) + " " + types[event_type](event_data, everything)
     else:
         return "Event type " + event_type + " is not implemented. Data: " + str(event_data)
-
-
 
 '''
 Format the year and date to be consistent
