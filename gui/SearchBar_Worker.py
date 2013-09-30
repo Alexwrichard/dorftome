@@ -1,4 +1,5 @@
 import time
+from helpers import capitalize
 
 class SearchBar_Worker():
     
@@ -26,18 +27,23 @@ class SearchBar_Worker():
         else:
             end = chunk_size * (num + 1)
             
-        names_found = []
+        #word_beginning_results stores results where the search substring occurs
+        #at the beginning of a word boundary.
+        word_beginning_results = []
+        other_results = []
         for name in self.name_list[start:end]:
             substr_index = name.find(text)
             if substr_index is not -1:
-                names_found.append((name, substr_index))
+                #give precedence when the user's entry matches after a space 
+                #or at the beginning of the word.
+                if name[substr_index - 1] == " " or substr_index == 0:
+                    word_beginning_results.append(capitalize(name))
+                else:
+                    other_results.append(capitalize(name))
         
-        #I might rewrite this... I've been writing some haskell lately and it's
-        #mixing in with my Python. Basically, give precedence when
-        #the user's entry matches after a space or at the beginning of the word.
-        #Within these blocks, the results are sorted automatically.
-        names_found.sort(key=lambda info: 0 if (info[0][info[1] - 1] == " " or info[1] == 0) else 1)
-        names_found = [i for i in map(lambda x: x[0], names_found)]
+        word_beginning_results.sort()
+        other_results.sort()
+        names_found = word_beginning_results + other_results
 
         #TODO: These should be returned capitalized
         return names_found

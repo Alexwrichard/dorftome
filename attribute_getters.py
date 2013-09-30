@@ -1,12 +1,5 @@
 #!/usr/bin/env python3
-
-def capitalize(string):
-    words = string.split(' ')
-    for i in range(len(words)):
-        if words[i] not in ['the', 'a', 'of'] or i == 0:
-            words[i] = words[i].capitalize()
-    
-    return ' '.join(words)
+from helpers import capitalize
 
 ###################################
 #----GENERIC ATTRIBUTE GETTERS----#
