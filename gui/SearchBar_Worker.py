@@ -45,5 +45,4 @@ class SearchBar_Worker():
         other_results.sort()
         names_found = word_beginning_results + other_results
 
-        #TODO: These should be returned capitalized
         return names_found
