@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 from lxml import etree
 from lxml.etree import iterparse
+
 from attribute_getters import *
 from event_processing import event_type_dispatcher
+from dict_loading import load_element, parse_file
+from connect_elements import parse_historical_events
+
 import functools
 import os
 import codecs
 import time
 import configparser
 
-from Parser_Thread import Parser_Thread
 from multiprocessing import Pool
-
-from connect_elements import *
 
 class ProfilerStruct:
     PROFILE_TIME=False
@@ -114,15 +115,10 @@ def load_dict(filename):
     else:
         pool = None
     
-    #create parser object that handles the element
-    parser_thread = Parser_Thread()
-    
     #using multi-threading to parse file
     if pool:
         for _, element in etree.iterparse(filename):
-
             if element.tag in upper_level_tags:
-                
                 #Use partial from functools to create something we can call back to while
                 #passing the everything dict.
                 add_elements_callback = functools.partial(add_elements, profiler=profiler, everything=everything)
@@ -130,12 +126,10 @@ def load_dict(filename):
                 #Call parser to process the element
                 #The element must be sent as a string
                 #Will callback to add elements to actually add to everything dict
-                pool.apply_async(parser_thread.load_element, 
+                pool.apply_async(load_element, 
                                  args=(etree.tostring(element), element.tag), 
                                  callback = add_elements_callback)
-                
                 close_element(element)
-                
         #wait for all threads to stop
         pool.close()
         pool.join()
@@ -143,7 +137,7 @@ def load_dict(filename):
     #using only main thread to parse file
     else:
         #use parser object to parse file
-        everything = parser_thread.parse_file(filename)
+        everything = parse_file(filename)
     
     print("Finished parsing")
     
@@ -202,5 +196,3 @@ def add_elements(packed_elements, profiler, everything):
         
     if profiler.PROFILE_MEMORY:
         profiler.memory_array.append(("Finishing " + upper_level_tag + ": ", asizeof(everything)))
-     
-

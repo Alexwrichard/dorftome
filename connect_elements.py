@@ -14,16 +14,14 @@ def add_event_link_to_site(event, event_id, everything):
 def parse_historical_events(everything):
     if not 'historical_events' in everything:
         return
-    
+
     hfid_set = ['hfid', 'slayer_hfid', 'group_hfid', 'group_1_hfid', 'group_2_hfid', 'woundee_hfid',
                            'wounder_hfid', 'trickster_hfid', 'cover_hfid', 'hist_fig_id', 'target_hfid', 
                            'snatcher_hfid', 'changee_hfid', 'changer_hfid', 'hist_figure_id', 'hfid_target']
-                           
     siteid_set = ['site_id', 'coords']
     
     for event_data in everything['historical_events']:
-        
-        #we store None for unimplemented events
+        #We store None for unimplemented events
         #such as creature devoured
         if event_data == None:
             continue
@@ -34,4 +32,3 @@ def parse_historical_events(everything):
             elif key in siteid_set:
                 add_event_link_to_site(event_data, event_data['id'], everything)
                 break
-
