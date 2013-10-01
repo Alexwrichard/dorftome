@@ -2,6 +2,7 @@
 from attribute_getters import *
 from link_creator import *
 from event_processing import time_string, event_type_dispatcher
+import os
 
 CSS_STR = None
 
@@ -10,7 +11,8 @@ Load the stylesheet from an external file
 '''
 def load_css():
     global CSS_STR
-    f = open("master.css")
+    cssfile = os.path.join(os.getcwd(), '..', 'resources', 'master.css')
+    f = open(cssfile)
     CSS_STR = f.read()
     f.close()
 

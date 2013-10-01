@@ -64,7 +64,7 @@ def load_dict(filename):
     profiler = ProfilerStruct()
 
     cfg = configparser.ConfigParser()
-    cfg.read('legend_reader.cfg')
+    cfg.read(os.path.join('..', 'resources', 'legend_reader.cfg'))
     num_parsing_threads = int(cfg.get('default',"num_parsing_threads"))
     
     profiler.PROFILE_TIME = (cfg.get('profiling',"print_parsing_timing") == "True")
