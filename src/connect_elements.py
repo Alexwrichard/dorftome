@@ -1,16 +1,25 @@
 from attribute_getters import *
 
+'''
+Add a historical event ID to a given historical figure's event list.
+'''
 def add_event_link_to_hf(hfid, event_id, everything):
-        get_element(hfid, 'historical_figures', everything)['events'].append(event_id)
+    get_element(hfid, 'historical_figures', everything)['events'].append(event_id)
         
+'''
+Add a historical event ID to a given site's event list.
+'''
 def add_event_link_to_site(event, event_id, everything):
-        try:
-            #add event based on site_id
-            get_element(event['site_id'], 'sites', everything)['events'].append(event_id)
-        except KeyError:
-            #must use coords instead
-            site_data = get_site_data(event['coords'], everything)
+    try:
+        #add event based on site_id
+        get_element(event['site_id'], 'sites', everything)['events'].append(event_id)
+    except KeyError:
+        #must use coords instead
+        site_data = get_site_data(event['coords'], everything)
 
+'''
+Process all historical events and add links to historical figures and sites.
+'''
 def parse_historical_events(everything):
     if not 'historical_events' in everything:
         return

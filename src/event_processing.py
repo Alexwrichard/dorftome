@@ -2,9 +2,13 @@
 from attribute_getters import *
 from link_creator import *
 
+'''
+Given an event ID, dispatch to the appropriate function to handle 
+that event type and return a string describing the event.
+'''
 def event_type_dispatcher(event_id, everything):
     #Probably could have avoided this with string replacing and reflection magic,
-    #but I kind of like them all to be right here for reference. This dictionary 
+    #but it is nice to have them all here for reference. This dictionary 
     #maps strings to function names.
     types = { 'add hf entity link' : add_hf_entity_link,
               'add hf hf link' : add_hf_hf_link,
@@ -96,7 +100,6 @@ etc.
 '''
 def time_string(seconds):
     #There are 403200 seconds in a DF year.
-    yearsec = 403200
     months = ['Granite','Slate','Felsite','Hematite','Malachite','Galena','Limestone','Sandstone','Timber','Moonstone','Opal','Obsidian']
     #33600 = seconds in a DF month (403200 / 12)
     sec_in_month = seconds % 33600

@@ -1,3 +1,6 @@
+'''
+Capitalize a string using common English convention.
+'''
 def capitalize(string):
     words = string.split(' ')
     for i in range(len(words)):
