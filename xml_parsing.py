@@ -191,8 +191,8 @@ def add_elements(packed_elements, profiler, everything):
     everything[upper_level_tag + "_offset"] = offset
     
     if profiler.PROFILE_TIME:
-        profiler.time_array.append([upper_level_tag, time.time() - start_time])
-        start_time = time.time() #measure time until next high-level tag is finished
+        profiler.time_array.append([upper_level_tag, time.time() - profiler.start_time])
+        profiler.start_time = time.time() #measure time until next high-level tag is finished
         
     if profiler.PROFILE_MEMORY:
         profiler.memory_array.append(("Finishing " + upper_level_tag + ": ", asizeof(everything)))
