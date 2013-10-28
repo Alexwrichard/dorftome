@@ -3,6 +3,7 @@ from lxml import etree
 from lxml.etree import iterparse
 
 from attribute_getters import *
+from global_vars import *
 from event_processing import event_type_dispatcher
 from dict_loading import load_element, parse_file
 from connect_elements import parse_historical_events
@@ -64,7 +65,7 @@ def load_dict(filename):
     profiler = ProfilerStruct()
 
     cfg = configparser.ConfigParser()
-    cfg.read(os.path.join('..', 'resources', 'legend_reader.cfg'))
+    cfg.read(os.path.join(RESOURCES_DIR, 'legend_reader.cfg'))
     num_parsing_threads = int(cfg.get('default',"num_parsing_threads"))
     
     profiler.PROFILE_TIME = (cfg.get('profiling',"print_parsing_timing") == "True")

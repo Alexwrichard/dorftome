@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from attribute_getters import *
 from link_creator import *
+from global_vars import *
 from event_processing import time_string, event_type_dispatcher
 import os
 
@@ -11,12 +12,10 @@ Load the stylesheet from an external file
 '''
 def load_css():
     global CSS_STR
-    cssfile = os.path.join(os.getcwd(), '..', 'resources', 'master.css')
+    cssfile = os.path.join(RESOURCES_DIR, 'master.css')
     f = open(cssfile)
     CSS_STR = f.read()
     f.close()
-
-
 
 '''
 Return a CSS class name for a given event. All events of the same

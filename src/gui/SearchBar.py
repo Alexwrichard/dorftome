@@ -6,10 +6,10 @@ from gui.SearchBar_Worker import *
 from multiprocessing import Pool, cpu_count
 
 class SearchBar(QtGui.QLineEdit):
-    
     def __init__(self, main_window, open_fcn):
         QtGui.QLineEdit.__init__(self, "", main_window)
         self.autocomplete = QtGui.QListWidget(self)
+        self.autocomplete.hide()
 
         #create pool for worker processes
         #create pool with num CPUs minus one if available
@@ -62,13 +62,10 @@ class SearchBar(QtGui.QLineEdit):
         self.load_autocomplete()
     
     def load_autocomplete(self):
-        #self.l.setAttribute(QtCore.Qt.WA_ShowWithoutActivating)
         self.autocomplete.setWindowFlags(QtCore.Qt.ToolTip)
-        # | QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.FramelessWindowHint)
         
         #annoyingly, list will not stay fixed to the position of the text entry
         self.autocomplete.move(self.mapToGlobal(QtCore.QPoint(0, self.height())))
-        
         self.autocomplete.hide()
 
         #set watchers
@@ -76,7 +73,6 @@ class SearchBar(QtGui.QLineEdit):
         self.autocomplete.itemDoubleClicked.connect(self.clickWatcher)
 
     def textWatcher(self, text):
-        
         self.search_text = text.lower()
         
         self.autocomplete.clear()
