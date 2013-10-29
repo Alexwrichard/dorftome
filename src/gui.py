@@ -34,13 +34,21 @@ class UI(object):
         self.main_layout = QtGui.QGridLayout()
         self.search_bar_layout = QtGui.QGridLayout()
         
-        #Back button
-        self.button_pixmap = QtGui.QPixmap(os.path.join(RESOURCES_DIR, 'arrow_left.png'))
-        self.button_icon = QtGui.QIcon(self.button_pixmap)
+        #Back and forward buttons
+        back_button_pixmap = QtGui.QPixmap(os.path.join(RESOURCES_DIR, 'arrow_left.png'))
+        forward_button_pixmap = QtGui.QPixmap(os.path.join(RESOURCES_DIR, 'arrow_right.png'))
+        back_button_icon = QtGui.QIcon(back_button_pixmap)
+        forward_button_icon = QtGui.QIcon(forward_button_pixmap)
+        
         self.back_button = QtGui.QPushButton(main_window)
-        self.back_button.setIcon(self.button_icon)
+        self.forward_button = QtGui.QPushButton(main_window)
+        self.back_button.setIcon(back_button_icon)
+        self.forward_button.setIcon(forward_button_icon)
         self.back_button.setIconSize(QtCore.QSize(20, 20))
+        self.forward_button.setIconSize(QtCore.QSize(20, 20))
+        
         self.search_bar_layout.addWidget(self.back_button, 0, 0, 1, 1)
+        self.search_bar_layout.addWidget(self.forward_button, 0, 1, 1, 1)
         #page_history will be a list of (int, list)s, where the tuple index
         #corresponds to the tab index (each tab has its own history), and the
         #int in the tuple is the current pointer in the history array for that tab.
@@ -48,7 +56,7 @@ class UI(object):
 
         #Search bar
         self.search_bar = SearchBar(main_window, self.open_in_new_tab)
-        self.search_bar_layout.addWidget(self.search_bar, 0, 1, 1, 1)
+        self.search_bar_layout.addWidget(self.search_bar, 0, 2, 1, 1)
 
         #Tabs
         self.tab_widget = QtGui.QTabWidget(main_window)
@@ -174,6 +182,7 @@ class UI(object):
         self.action_openinnewtab.triggered.connect(self.on_click_openinnewtab)
         self.tab_widget.tabCloseRequested.connect(self.on_close_tab)
         self.back_button.pressed.connect(self.on_click_backbutton)
+        self.forward_button.pressed.connect(self.on_click_forwardbutton)
 
     def on_close_tab(self, index):
         self.page_history.pop(self.tab_widget.currentIndex())
@@ -191,6 +200,14 @@ class UI(object):
         new_pointer_val = current_tuple[0] - 1
         newtuple = (new_pointer_val, current_tuple[1])
         if(newtuple[0] >= 0):
+            self.page_history[self.tab_widget.currentIndex()] = newtuple
+            self.open_in_current_tab(newtuple[1][newtuple[0]])
+            
+    def on_click_forwardbutton(self):
+        current_tuple = self.page_history[self.tab_widget.currentIndex()]
+        new_pointer_val = current_tuple[0] + 1
+        newtuple = (new_pointer_val, current_tuple[1])
+        if(newtuple[0] < len(current_tuple[1])):
             self.page_history[self.tab_widget.currentIndex()] = newtuple
             self.open_in_current_tab(newtuple[1][newtuple[0]])
 
