@@ -1,4 +1,4 @@
-df-legends-reader
+DorfTome
 =================
 
 A browser that allows you to view Dwarf Fortress legends exports in an efficient and fluid manner.
